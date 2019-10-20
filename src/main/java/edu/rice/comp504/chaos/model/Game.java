@@ -11,22 +11,23 @@ import java.util.List;
  * The pac-man game.
  */
 public class Game implements java.io.Serializable{
-    private static int[][] map;
-
+    private int[][] maze;
+    private int[][] foodMap;
     /**
      * Constructor. Initialize the map.
      */
     public Game() {
         try {
-            map = loadMap(Settings.mapFileLocation);
+            maze = loadMap(Settings.mazeFileLocation);
+            foodMap = loadMap(Settings.foodMapFileLocation);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Load map from map file.
-     * @param mapFileLocation the map file
+     * Load map from map file. (The map can be maze map or food map.)
+     * @param mapFileLocation the map file.
      * @return map array.
      * @throws IOException map file not found.
      */
@@ -64,10 +65,20 @@ public class Game implements java.io.Serializable{
     }
 
     /**
-     * Get the map.
-     * @return the map.
+     * Get the maze.
+     * @return the maze.
      */
-    public int[][] getMap() {
-        return map;
+    public int[][] getMaze() {
+        return maze;
     }
+
+    /**
+     * Get the food map.
+     * @return the food map.
+     */
+    public int[][] getFoodMap() {
+        return foodMap;
+    }
+
+
 }

@@ -2,9 +2,16 @@
 
 //app to draw polymorphic shapes on canvas
 var app;
+//the interval ID for updating the game
+var updateInterval;
 
 function createApp(canvas) {
     var context = canvas.getContext("2d");
+
+    var drawBackground = function() {
+        context.fillStyle = "#000000";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+    };
 
     var logicToPhysical = function(lx,ly) {
         return {
@@ -16,7 +23,7 @@ function createApp(canvas) {
     var _COS = [1,0,-1,0];
     var _SIN = [0,1,0,-1];
 
-    var drawMap = function(map) {
+    var drawMaze = function(map) {
         context.lineWidth = 2;
         for (var j = 1; j < map.length - 1; j++) {
             for (var i = 1; i < map[j].length - 1; i++) {
@@ -41,7 +48,7 @@ function createApp(canvas) {
                                 context.strokeStyle = "#1414FF";
                                 break;
                             case 2:
-                                context.strokeStyle = "#FFFFFF";
+                                context.strokeStyle = "#FFAAA4";
                                 break;
                             case 3:
                                 context.strokeStyle = "#D60022";
@@ -104,25 +111,74 @@ function createApp(canvas) {
                     context.arc(980, 160, 10, .5 * Math.PI, 1.5 * Math.PI, false);
                     context.stroke();
                     context.closePath();
-                } else {
-                    
                 }
             }
         }
+    };
 
+    var drawFoodMap = function(map) {
+        context.lineWidth = 2;
+        for (var j = 1; j < map.length - 1; j++) {
+            for (var i = 1; i < map[j].length - 1; i++) {
+                var value = map[j][i];
+                var pos = logicToPhysical(i, j);
+                if (value === 1) {
+                    context.fillStyle = "#FFAAA4";
+                    context.beginPath();
+                    context.arc(pos.x, pos.y, 3, 0, 2 * Math.PI, true);
+                    context.fill();
+                    context.closePath();
+                } else if (value === 2) {
+                    if (energizerAppear) {
+                        context.fillStyle = "#FFAAA4";
+                        context.beginPath();
+                        context.arc(pos.x, pos.y, 10, 0, 2 * Math.PI, true);
+                        context.fill();
+                        context.closePath();
+                    }
+                }
+            }
+        }
+    };
+
+    var clear = function() {
+        context.clearRect(0,0, canvas.width, canvas.height);
     };
 
     return {
-        drawMap: drawMap
+        drawBackground: drawBackground,
+        drawMaze: drawMaze,
+        drawFoodMap: drawFoodMap,
+        clear: clear,
+        dims: {height: canvas.height, width: canvas.width}
     }
 }
 
 
 window.onload = function() {
     app = createApp(document.querySelector("canvas"));
-
-    $.get("/PacManGo/map",function (data) {
-        app.drawMap(data);
+    app.drawBackground();
+    $.get("/PacManGo/load",function (data) {
+        app.drawMaze(data.maze);
+        app.drawFoodMap(data.foodMap);
     }, "json");
-
+    setUpdateFreq();
 };
+
+/**
+ * Determine how often the game updates occur.
+ */
+function setUpdateFreq() {
+    updateInterval = setInterval("updateGame()", 100);
+}
+
+var energizerAppear = true;
+function updateGame() {
+    energizerAppear = !energizerAppear;
+    $.get("/PacManGo/update", function(data) {
+        app.clear();
+        app.drawBackground();
+        app.drawMaze(data.maze);
+        app.drawFoodMap(data.foodMap);
+    }, "json");
+}
