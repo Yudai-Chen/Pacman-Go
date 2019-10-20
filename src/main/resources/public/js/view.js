@@ -120,6 +120,15 @@ function createApp(canvas) {
                 }
             }
         }
+        context.strokeStyle = "#D60022";
+        context.beginPath();
+        context.moveTo(980, 150);
+        context.lineTo(1010, 150);
+        context.arc(1010, 160, 10, -.5 * Math.PI, .5 * Math.PI, false);
+        context.lineTo(980, 170);
+        context.arc(980, 160, 10, .5 * Math.PI, 1.5 * Math.PI, false);
+        context.stroke();
+        context.closePath();
     };
 
     return {
