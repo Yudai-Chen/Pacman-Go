@@ -4,6 +4,18 @@
 var app;
 //the interval ID for updating the game
 var updateInterval;
+var pacmanImg;
+var pacmanImgSrc = "pacman.png";
+var keyCode = null;
+var isKeyDown = false;
+var pacmanAngle = 0;
+
+function logicToPhysical(lx,ly) {
+    return {
+        x: lx * 20 + 10,
+        y: ly * 20 + 10
+    };
+}
 
 function createApp(canvas) {
     var context = canvas.getContext("2d");
@@ -11,13 +23,6 @@ function createApp(canvas) {
     var drawBackground = function() {
         context.fillStyle = "#000000";
         context.fillRect(0, 0, canvas.width, canvas.height);
-    };
-
-    var logicToPhysical = function(lx,ly) {
-        return {
-            x: lx * 20 + 10,
-            y: ly * 20 + 10
-        };
     };
 
     var _COS = [1,0,-1,0];
@@ -141,6 +146,15 @@ function createApp(canvas) {
         }
     };
 
+    var drawPacman = function(src, x, y, width, height, angle) {
+        context.save();
+        context.translate(x + width / 2, y + height / 2);
+        context.rotate(angle);
+        context.translate(- x - width / 2, - y - height / 2);
+        context.drawImage(src, x, y, width, height);
+        context.restore();
+    };
+
     var clear = function() {
         context.clearRect(0,0, canvas.width, canvas.height);
     };
@@ -149,6 +163,7 @@ function createApp(canvas) {
         drawBackground: drawBackground,
         drawMaze: drawMaze,
         drawFoodMap: drawFoodMap,
+        drawPacman: drawPacman,
         clear: clear,
         dims: {height: canvas.height, width: canvas.width}
     }
@@ -156,11 +171,21 @@ function createApp(canvas) {
 
 
 window.onload = function() {
+    pacmanImg = new Image();
+    pacmanImg.src =pacmanImgSrc;
+    document.addEventListener("keydown", function(e) {
+        isKeyDown = true;
+        keyCode = e.keyCode;
+    });
+    document.addEventListener("keyup", function() {
+        isKeyDown = false;
+    });
     app = createApp(document.querySelector("canvas"));
     app.drawBackground();
     $.get("/PacManGo/load",function (data) {
         app.drawMaze(data.maze);
         app.drawFoodMap(data.foodMap);
+        app.drawPacman(pacmanImg, data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
     }, "json");
     setUpdateFreq();
 };
@@ -175,10 +200,37 @@ function setUpdateFreq() {
 var energizerAppear = true;
 function updateGame() {
     energizerAppear = !energizerAppear;
+    if (isKeyDown) {
+        var move;
+        if (keyCode === 37) {
+            move = "left";
+        } else if (keyCode === 38) {
+            move ="up";
+        } else if (keyCode === 39) {
+            move = "right";
+        } else if (keyCode === 40) {
+            move = "down";
+        } else {
+            return;
+        }
+        $.post("/PacManGo/pacman-move", move, function (data) {
+
+        })
+    }
     $.get("/PacManGo/update", function(data) {
         app.clear();
         app.drawBackground();
         app.drawMaze(data.maze);
         app.drawFoodMap(data.foodMap);
+        if (data.pacman.dir.directionName === "left") {
+            pacmanAngle = 0;
+        } else if (data.pacman.dir.directionName === "up") {
+            pacmanAngle = .5 * Math.PI;
+        } else if (data.pacman.dir.directionName === "right") {
+            pacmanAngle = Math.PI;
+        } else if (data.pacman.dir.directionName === "down") {
+            pacmanAngle = 1.5 * Math.PI;
+        }
+        app.drawPacman(pacmanImg, data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, pacmanAngle);
     }, "json");
 }

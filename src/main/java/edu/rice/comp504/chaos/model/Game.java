@@ -1,11 +1,7 @@
 package edu.rice.comp504.chaos.model;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import edu.rice.comp504.chaos.model.entities.Pacman;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The pac-man game.
@@ -13,56 +9,21 @@ import java.util.List;
 public class Game implements java.io.Serializable{
     private int[][] maze;
     private int[][] foodMap;
+    private Pacman pacman;
     /**
      * Constructor. Initialize the map.
      */
     public Game() {
         try {
-            maze = loadMap(Settings.mazeFileLocation);
-            foodMap = loadMap(Settings.foodMapFileLocation);
+            Utilities.loadStaticMaze(Settings.mazeFileLocation);
+            maze = Utilities.getsMaze();
+            foodMap = Utilities.loadMap(Settings.foodMapFileLocation);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        pacman = new Pacman(new Coordination(Settings.pacmanStartLocX, Settings.pacmanStartLocY), Settings.pacmanSpeed, Settings.pacmanSize);
     }
 
-    /**
-     * Load map from map file. (The map can be maze map or food map.)
-     * @param mapFileLocation the map file.
-     * @return map array.
-     * @throws IOException map file not found.
-     */
-    private int[][] loadMap(String mapFileLocation) throws IOException {
-        File file = new File(mapFileLocation);
-        if (!file.exists()) {
-            System.out.println(111);
-            throw new RuntimeException("Map file not found.");
-        }
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        String str;
-        List<int[]> list = new ArrayList<>();
-        while ((str = br.readLine()) != null) {
-            int lineIndex = 0;
-            String[] lineBuffer = str.split(", ");
-            int[] dArr = new int[lineBuffer.length];
-            for (String ss : lineBuffer) {
-                if (ss != null) {
-                    dArr[lineIndex++] = Integer.parseInt(ss);
-                }
-
-            }
-            list.add(dArr);
-        }
-        int max = 0;
-        for (int[] ints : list) {
-            if (max < ints.length)
-                max = ints.length;
-        }
-        int[][] array = new int[list.size()][max];
-        for (int i = 0; i < array.length; i++) {
-            System.arraycopy(list.get(i), 0, array[i], 0, list.get(i).length);
-        }
-       return array;
-    }
 
     /**
      * Get the maze.
@@ -80,5 +41,22 @@ public class Game implements java.io.Serializable{
         return foodMap;
     }
 
+    /**
+     * Update the positions of all entities in the game.
+     */
+    public void update() {
+        pacman.move();
+        maze = Utilities.getsMaze();
+    }
 
+    /**
+     * Deal with player's request for moving pacman.
+     * @param request the player's request.
+     * @return whether it is a valid move.
+     */
+    public boolean pacmanMove(String request) {
+        Direction moveDir = new Direction(request);
+        pacman.setPlayerAction(moveDir);
+        return true;
+    }
 }
