@@ -12,17 +12,33 @@ import java.util.List;
  */
 public class Utilities {
     private static int[][] sMaze;
+    private static int[][] sFoodMap;
 
+    /**
+     * Load static maze from external file.
+     * @param mapFileLocation the location of the maze map file.
+     * @throws IOException file not found.
+     */
     static void loadStaticMaze(String mapFileLocation) throws IOException {
         sMaze = loadMap(mapFileLocation);
     }
+
+    /**
+     * Load static food map from external file.
+     * @param mapFileLocation the location of the food map file.
+     * @throws IOException file not found.
+     */
+    static void loadStaticFoodMap(String mapFileLocation) throws IOException {
+        sFoodMap = loadMap(mapFileLocation);
+    }
+
     /**
      * Load map from map file. (The map can be maze map or food map.)
      * @param mapFileLocation the map file.
      * @return map array.
      * @throws IOException map file not found.
      */
-    static int[][] loadMap(String mapFileLocation) throws IOException {
+    private static int[][] loadMap(String mapFileLocation) throws IOException {
         File file = new File(mapFileLocation);
         if (!file.exists()) {
             System.out.println(111);
@@ -85,10 +101,38 @@ public class Utilities {
     }
 
     /**
+     * Get the item(x, y) in the static food map. ATTENTION: In a 2-dimension array, we access the raw first and column next.
+     * However in the canvas, the column is the y-dimension and the raw is the x-dimension, so we should reverse the coordination
+     * to access to the maze array.
+     * @return the item.
+     */
+    public static int getFoodMapItem(int x, int y) {
+        return sFoodMap[y][x];
+    }
+
+    /**
+     * Set the item on a certain coordination in the food map to a new item.
+     * @param x the x-coordination.
+     * @param y the y-coordination.
+     * @param newItem the new item.
+     */
+    public static void setFoodMapItem(int x, int y, int newItem) {
+        sFoodMap[y][x] = newItem;
+    }
+
+    /**
      * Get the static maze.
      * @return the static maze.
      */
     static int[][] getsMaze() {
         return sMaze;
+    }
+
+    /**
+     * Get the static food map.
+     * @return the static food map.
+     */
+    static int[][] getsFoodMap() {
+        return sFoodMap;
     }
 }

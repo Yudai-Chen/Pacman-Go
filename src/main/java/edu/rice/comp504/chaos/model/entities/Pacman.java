@@ -43,6 +43,17 @@ public class Pacman extends AEntity {
         } else {
             move(computeIntendedDestination());
         }
+        earnCredit();
+    }
+
+    private void earnCredit() {
+        if (Utilities.getFoodMapItem(getCoord().x, getCoord().y) == 1) {
+            credit += 10;
+            Utilities.setFoodMapItem(getCoord().x, getCoord().y, 0);
+        } else if (Utilities.getFoodMapItem(getCoord().x, getCoord().y) == 2) {
+            //TODO:
+            Utilities.setFoodMapItem(getCoord().x, getCoord().y, 0);
+        }
     }
 
     /**

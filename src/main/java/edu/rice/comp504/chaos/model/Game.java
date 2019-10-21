@@ -9,6 +9,7 @@ import java.io.IOException;
 public class Game implements java.io.Serializable{
     private int[][] maze;
     private int[][] foodMap;
+    private int timer;
     private Pacman pacman;
     /**
      * Constructor. Initialize the map.
@@ -16,29 +17,14 @@ public class Game implements java.io.Serializable{
     public Game() {
         try {
             Utilities.loadStaticMaze(Settings.mazeFileLocation);
+            Utilities.loadStaticFoodMap(Settings.foodMapFileLocation);
             maze = Utilities.getsMaze();
-            foodMap = Utilities.loadMap(Settings.foodMapFileLocation);
+            foodMap = Utilities.getsFoodMap();
         } catch (IOException e) {
             e.printStackTrace();
         }
         pacman = new Pacman(new Coordination(Settings.pacmanStartLocX, Settings.pacmanStartLocY), Settings.pacmanSpeed, Settings.pacmanSize);
-    }
-
-
-    /**
-     * Get the maze.
-     * @return the maze.
-     */
-    public int[][] getMaze() {
-        return maze;
-    }
-
-    /**
-     * Get the food map.
-     * @return the food map.
-     */
-    public int[][] getFoodMap() {
-        return foodMap;
+        timer = 0;
     }
 
     /**
@@ -46,7 +32,7 @@ public class Game implements java.io.Serializable{
      */
     public void update() {
         pacman.move();
-        maze = Utilities.getsMaze();
+        timer ++;
     }
 
     /**

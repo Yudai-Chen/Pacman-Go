@@ -5,10 +5,11 @@ var app;
 //the interval ID for updating the game
 var updateInterval;
 var pacmanImg;
-var pacmanImgSrc = "pacman.png";
+var pacmanImgSrcPrefix = "./pacman/";
 var keyCode = null;
 var isKeyDown = false;
 var pacmanAngle = 0;
+var pacmanStage = 0;
 
 function logicToPhysical(lx,ly) {
     return {
@@ -171,8 +172,13 @@ function createApp(canvas) {
 
 
 window.onload = function() {
-    pacmanImg = new Image();
-    pacmanImg.src =pacmanImgSrc;
+    pacmanImg = [];
+    pacmanImg[0] = new Image();
+    pacmanImg[0].src = pacmanImgSrcPrefix + "stage1.png";
+    pacmanImg[1] = new Image();
+    pacmanImg[1].src = pacmanImgSrcPrefix + "stage2.png";
+    pacmanImg[2] = new Image();
+    pacmanImg[2].src = pacmanImgSrcPrefix + "stage3.png";
     document.addEventListener("keydown", function(e) {
         isKeyDown = true;
         keyCode = e.keyCode;
@@ -185,7 +191,7 @@ window.onload = function() {
     $.get("/PacManGo/load",function (data) {
         app.drawMaze(data.maze);
         app.drawFoodMap(data.foodMap);
-        app.drawPacman(pacmanImg, data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
+        app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
     }, "json");
     setUpdateFreq();
 };
@@ -199,6 +205,7 @@ function setUpdateFreq() {
 
 var energizerAppear = true;
 function updateGame() {
+    pacmanStage = (pacmanStage + 1) % 3;
     energizerAppear = !energizerAppear;
     if (isKeyDown) {
         var move;
@@ -231,6 +238,6 @@ function updateGame() {
         } else if (data.pacman.dir.directionName === "down") {
             pacmanAngle = 1.5 * Math.PI;
         }
-        app.drawPacman(pacmanImg, data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, pacmanAngle);
+        app.drawPacman(pacmanImg[pacmanStage], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, pacmanAngle);
     }, "json");
 }
