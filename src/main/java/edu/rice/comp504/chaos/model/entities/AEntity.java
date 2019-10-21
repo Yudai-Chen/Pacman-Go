@@ -50,7 +50,7 @@ public abstract class AEntity implements Cloneable, Serializable {
      */
     public void move() {
         if (loc.isRegularSpot()) {
-            if (isIntendedDirectionValid()) {
+            if (getItemOnIntendedDirection() == 0) {
                 move(computeIntendedDestination());
             } else {
                 dir = new Direction("stop");
@@ -70,6 +70,14 @@ public abstract class AEntity implements Cloneable, Serializable {
     }
 
     /**
+     * Move to a specific coordination.
+     */
+    void moveToCoord (Coordination destination) {
+        this.loc = Utilities.coord2Loc(destination);
+        this.coord = destination;
+    }
+
+    /**
      * Compute the intended destination according to the location, speed and direction.
      * @return the intended destination.
      */
@@ -86,11 +94,10 @@ public abstract class AEntity implements Cloneable, Serializable {
     }
 
     /**
-     * Test whether the intended direction is a valid direction.
-     * @return whether the intended direction is a valid direction.
+     * Get the item on the next intended position.
+     * @return the item.
      */
-    boolean isIntendedDirectionValid() {
-        int item = Utilities.getMazeItem(coord.x + dir.getDirX(), coord.y + dir.getDirY());
-        return item == 0;
+    int getItemOnIntendedDirection() {
+        return Utilities.getMazeItem(coord.x + dir.getDirX(), coord.y + dir.getDirY());
     }
 }

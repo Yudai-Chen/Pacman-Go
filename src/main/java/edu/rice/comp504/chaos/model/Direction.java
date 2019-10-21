@@ -42,4 +42,10 @@ public class Direction {
      * @return the Y-dimension intend.
      */
     public int getDirY() {return dir.y;}
+
+    /**
+     * Get the name of the direction.
+     * @return the name of the direction.
+     */
+    public String getDirName() {return directionName;}
 }

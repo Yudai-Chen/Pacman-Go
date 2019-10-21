@@ -25,7 +25,7 @@ public class GameController implements SparkApplication {
         });
         post("/pacman-move", ((request, response) -> {
             game.pacmanMove(request.body());
-            return 11;
+            return 200;
         }));
     }
 }

@@ -30,12 +30,24 @@ public class Pacman extends AEntity {
      */
     public void move() {
         if (getLoc().isRegularSpot()) {
-            if (isPlayerActionValid()) {
+            if (getItemOnPlayerAction() == 0) {
                 setDirection(playerAction);
                 move(computeIntendedDestination());
+            } else if (getItemOnPlayerAction() == 9) {
+                if (getCoord().x == 1) {
+                    moveToCoord(new Coordination(58, 9));
+                } else {
+                    moveToCoord(new Coordination(1, 9));
+                }
             } else {
-                if (isIntendedDirectionValid()) {
+                if (getItemOnIntendedDirection() == 0) {
                     move(computeIntendedDestination());
+                } else if (getItemOnIntendedDirection() == 9) {
+                    if (getCoord().x == 1) {
+                        moveToCoord(new Coordination(58, 9));
+                    } else {
+                        moveToCoord(new Coordination(1, 9));
+                    }
                 } else {
                     setDirection(new Direction("stop"));
                 }
@@ -46,12 +58,16 @@ public class Pacman extends AEntity {
         earnCredit();
     }
 
+    /**
+     * Take food and earn credit.
+     */
     private void earnCredit() {
         if (Utilities.getFoodMapItem(getCoord().x, getCoord().y) == 1) {
             credit += 10;
             Utilities.setFoodMapItem(getCoord().x, getCoord().y, 0);
         } else if (Utilities.getFoodMapItem(getCoord().x, getCoord().y) == 2) {
             //TODO:
+            credit += 50;
             Utilities.setFoodMapItem(getCoord().x, getCoord().y, 0);
         }
     }
@@ -65,11 +81,10 @@ public class Pacman extends AEntity {
     }
 
     /**
-     * Test whether the intended direction is a valid direction.
-     * @return whether the intended direction is a valid direction.
+     * Get the item on the next intended position.
+     * @return the item.
      */
-    private boolean isPlayerActionValid() {
-        int item = Utilities.getMazeItem(getCoord().x + playerAction.getDirX(), getCoord().y + playerAction.getDirY());
-        return item == 0;
+    private int getItemOnPlayerAction() {
+        return Utilities.getMazeItem(getCoord().x + playerAction.getDirX(), getCoord().y + playerAction.getDirY());
     }
 }

@@ -10,6 +10,11 @@ var keyCode = null;
 var isKeyDown = false;
 var pacmanAngle = 0;
 var pacmanStage = 0;
+var redGhostImg;
+var pinkGhostImg;
+var blueGhostImg;
+var yellowGhostImg;
+var ghostImgSrcPrefix = "./ghost/";
 
 function logicToPhysical(lx,ly) {
     return {
@@ -156,6 +161,42 @@ function createApp(canvas) {
         context.restore();
     };
 
+    var drawGhost = function(name, direction, x, y, width, height) {
+        var imgSet;
+        switch (name) {
+            case "red":
+               imgSet = redGhostImg;
+               break;
+            case "pink":
+                imgSet = pinkGhostImg;
+                break;
+            case "blue":
+                imgSet = blueGhostImg;
+                break;
+            case "yellow":
+                imgSet = yellowGhostImg;
+                break;
+        }
+        var index;
+        switch (direction) {
+            case "left":
+                index = 0;
+                break;
+            case "up":
+                index = 1;
+                break;
+            case "right":
+                index = 2;
+                break;
+            case "down":
+                index = 3;
+                break;
+        }
+        context.save();
+        context.drawImage(imgSet[index], x, y, width, height);
+        context.restore();
+    };
+
     var clear = function() {
         context.clearRect(0,0, canvas.width, canvas.height);
     };
@@ -165,13 +206,13 @@ function createApp(canvas) {
         drawMaze: drawMaze,
         drawFoodMap: drawFoodMap,
         drawPacman: drawPacman,
+        drawGhost: drawGhost,
         clear: clear,
         dims: {height: canvas.height, width: canvas.width}
     }
 }
 
-
-window.onload = function() {
+function loadImages() {
     pacmanImg = [];
     pacmanImg[0] = new Image();
     pacmanImg[0].src = pacmanImgSrcPrefix + "stage1.png";
@@ -179,6 +220,39 @@ window.onload = function() {
     pacmanImg[1].src = pacmanImgSrcPrefix + "stage2.png";
     pacmanImg[2] = new Image();
     pacmanImg[2].src = pacmanImgSrcPrefix + "stage3.png";
+    redGhostImg = [];
+    pinkGhostImg = [];
+    blueGhostImg = [];
+    yellowGhostImg = [];
+    for (var i = 0; i < 4; i++) {
+        var suffix;
+        switch (i) {
+            case 0:
+                suffix = "left.png";
+                break;
+            case 1:
+                suffix = "up.png";
+                break;
+            case 2:
+                suffix = "right.png";
+                break;
+            default:
+                suffix = "down.png";
+                break;
+        }
+        redGhostImg[i] = new Image();
+        redGhostImg[i].src = ghostImgSrcPrefix + "red_" + suffix;
+        pinkGhostImg[i] = new Image();
+        pinkGhostImg[i].src = ghostImgSrcPrefix + "pink_" + suffix;
+        blueGhostImg[i] = new Image();
+        blueGhostImg[i].src = ghostImgSrcPrefix + "blue_" + suffix;
+        yellowGhostImg[i] = new Image();
+        yellowGhostImg[i].src = ghostImgSrcPrefix + "yellow_" + suffix;
+    }
+}
+
+window.onload = function() {
+    loadImages();
     document.addEventListener("keydown", function(e) {
         isKeyDown = true;
         keyCode = e.keyCode;
@@ -192,6 +266,9 @@ window.onload = function() {
         app.drawMaze(data.maze);
         app.drawFoodMap(data.foodMap);
         app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
+        data.ghosts.forEach(function(element) {
+            app.drawGhost(element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size);
+        });
     }, "json");
     setUpdateFreq();
 };
@@ -239,5 +316,8 @@ function updateGame() {
             pacmanAngle = 1.5 * Math.PI;
         }
         app.drawPacman(pacmanImg[pacmanStage], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, pacmanAngle);
+        data.ghosts.forEach(function(element) {
+            app.drawGhost(element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size);
+        });
     }, "json");
 }

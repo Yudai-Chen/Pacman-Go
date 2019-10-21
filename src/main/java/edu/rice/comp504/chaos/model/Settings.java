@@ -11,4 +11,10 @@ public class Settings {
     static int pacmanStartLocX = 740, pacmanStartLocY = 330;
     static int pacmanSpeed = 5, pacmanSize = 30;
     public static String pacmanStartDir = "left";
+    static int redStartLocX = 740, redStartLocY = 110;
+    static int pinkStartLocX = 740, pinkStartLocY = 170;
+    static int blueStartLocX = 700, blueStartLocY = 170;
+    static int yellowStartLocX = 780, yellowStartLocY = 170;
+    static String redGhostStartDir = "left", pinkGhostStartDir = "down", blueGhostStartDir = "up", yellowGhostStartDir = "up";
+    static int ghostSpeed = 5, ghostSize = 30;
 }
