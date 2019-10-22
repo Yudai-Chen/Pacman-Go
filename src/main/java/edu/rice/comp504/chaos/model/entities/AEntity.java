@@ -41,7 +41,7 @@ public abstract class AEntity implements Cloneable, Serializable {
         return coord;
     }
 
-    public Direction getDir() {
+    Direction getDir() {
         return dir;
     }
 
@@ -50,13 +50,24 @@ public abstract class AEntity implements Cloneable, Serializable {
      */
     public void move() {
         if (loc.isRegularSpot()) {
-            if (getItemOnIntendedDirection() == 0) {
-                move(computeIntendedDestination());
-            } else {
-                dir = new Direction("stop");
-            }
+            moveOnRegularSpot();
         } else {
             move(computeIntendedDestination());
+        }
+    }
+
+    /**
+     * Move on the regular spot. Regular spot is the center of each unit cell of the canvas.
+     */
+    void moveOnRegularSpot() {
+        if (getItemOnIntendedDirection() == 0) {
+            move(computeIntendedDestination());
+        } else if (getItemOnIntendedDirection() == 9) {
+            if (getCoord().x == 1) {
+                moveToCoord(new Coordination(58, 9));
+            } else {
+                moveToCoord(new Coordination(1, 9));
+            }
         }
     }
 
@@ -97,7 +108,7 @@ public abstract class AEntity implements Cloneable, Serializable {
      * Get the item on the next intended position.
      * @return the item.
      */
-    int getItemOnIntendedDirection() {
+    private int getItemOnIntendedDirection() {
         return Utilities.getMazeItem(coord.x + dir.getDirX(), coord.y + dir.getDirY());
     }
 }

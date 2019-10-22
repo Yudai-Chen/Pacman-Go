@@ -25,8 +25,19 @@ public class Coordination implements Cloneable, Serializable {
      * @param another another coordination.
      * @return distance.
      */
-    public double distance(Coordination another) {
+    private double distance(Coordination another) {
         return new Point(x, y).distance(new Point(another.x, another.y));
+    }
+
+    /**
+     * Get the minimum distance to another coordination in the maze.
+     * @param another another coordination.
+     * @return min distance.
+     */
+    public double minDistance(Coordination another) {
+        Coordination leftMost = new Coordination(1, 9);
+        Coordination rightMost = new Coordination(58, 9);
+        return Math.min(Math.min(distance(another), distance(leftMost) + leftMost.distance(another)), distance(rightMost) + rightMost.distance(another));
     }
 
     /**
@@ -38,10 +49,18 @@ public class Coordination implements Cloneable, Serializable {
     }
 
     /**
+     * If a coordination (x, y) in the maze is space (including inner space or border).
+     * @return if it is a space.
+     */
+    private boolean isSpace(int x, int y) {
+        return Utilities.getMazeItem(x, y) == 0 || Utilities.getMazeItem(x, y) == 9;
+    }
+
+    /**
      * Test if a logical address is a crossing in the maze.
-     * @return whether a physical address is a regular spot in the maze.
+     * @return whether a logical address is a crossing in the maze.
      */
     public boolean isCrossing() {
-        return false;
+        return (!((isSpace(x - 1, y) == isSpace(x + 1, y)) && (isSpace(x, y - 1) == isSpace(x, y + 1)))) || (isSpace(x - 1, y) && isSpace(x + 1, y) && isSpace(x, y - 1) && isSpace(x, y - 1));
     }
 }

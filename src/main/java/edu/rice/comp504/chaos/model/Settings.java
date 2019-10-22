@@ -3,7 +3,7 @@ package edu.rice.comp504.chaos.model;
 import java.util.Objects;
 
 /**
- * Application global settings.
+ * Application global settings. All static basic types variables.
  */
 public class Settings {
     static String mazeFileLocation = Objects.requireNonNull(Game.class.getClassLoader().getResource("../../map.txt")).getPath();

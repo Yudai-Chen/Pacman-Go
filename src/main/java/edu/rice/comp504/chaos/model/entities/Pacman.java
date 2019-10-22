@@ -40,17 +40,7 @@ public class Pacman extends AEntity {
                     moveToCoord(new Coordination(1, 9));
                 }
             } else {
-                if (getItemOnIntendedDirection() == 0) {
-                    move(computeIntendedDestination());
-                } else if (getItemOnIntendedDirection() == 9) {
-                    if (getCoord().x == 1) {
-                        moveToCoord(new Coordination(58, 9));
-                    } else {
-                        moveToCoord(new Coordination(1, 9));
-                    }
-                } else {
-                    setDirection(new Direction("stop"));
-                }
+                moveOnRegularSpot();
             }
         } else {
             move(computeIntendedDestination());
