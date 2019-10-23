@@ -14,6 +14,7 @@ var redGhostImg;
 var pinkGhostImg;
 var blueGhostImg;
 var yellowGhostImg;
+var frightenBlueGhostImg;
 var ghostImgSrcPrefix = "./ghost/";
 
 function logicToPhysical(lx,ly) {
@@ -161,7 +162,13 @@ function createApp(canvas) {
         context.restore();
     };
 
-    var drawGhost = function(name, direction, x, y, width, height) {
+    var drawGhost = function(state, name, direction, x, y, width, height) {
+        if (state === 3) {
+            context.save();
+            context.drawImage(frightenBlueGhostImg, x, y, width, height);
+            context.restore();
+            return;
+        }
         var imgSet;
         switch (name) {
             case "red":
@@ -249,6 +256,8 @@ function loadImages() {
         yellowGhostImg[i] = new Image();
         yellowGhostImg[i].src = ghostImgSrcPrefix + "yellow_" + suffix;
     }
+    frightenBlueGhostImg = new Image();
+    frightenBlueGhostImg.src = ghostImgSrcPrefix + "frighten_blue.png";
 }
 
 window.onload = function() {
@@ -267,7 +276,7 @@ window.onload = function() {
         app.drawFoodMap(data.foodMap);
         app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
         data.ghosts.forEach(function(element) {
-            app.drawGhost(element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size);
+            app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size);
         });
     }, "json");
     setUpdateFreq();
@@ -317,7 +326,7 @@ function updateGame() {
         }
         app.drawPacman(pacmanImg[pacmanStage], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, pacmanAngle);
         data.ghosts.forEach(function(element) {
-            app.drawGhost(element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size);
+            app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size);
         });
     }, "json");
 }
