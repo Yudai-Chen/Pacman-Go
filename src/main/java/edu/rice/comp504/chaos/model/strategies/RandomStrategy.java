@@ -1,5 +1,6 @@
 package edu.rice.comp504.chaos.model.strategies;
 
+import edu.rice.comp504.chaos.model.Coordination;
 import edu.rice.comp504.chaos.model.Direction;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class RandomStrategy implements IGhostStrategy{
      * @return the chosen one.
      */
     @Override
-    public Direction choose(List<Direction> availableDirections) {
+    public Direction choose(Coordination current, List<Direction> availableDirections) {
         return availableDirections.get((int)Math.floor(Math.random() * availableDirections.size()));
     }
 }

@@ -37,11 +37,11 @@ public abstract class AEntity implements Cloneable, Serializable {
         return loc;
     }
 
-    Coordination getCoord() {
+    public Coordination getCoord() {
         return coord;
     }
 
-    Direction getDir() {
+    public Direction getDir() {
         return dir;
     }
 

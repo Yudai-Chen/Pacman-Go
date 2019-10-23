@@ -1,5 +1,8 @@
 package edu.rice.comp504.chaos.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The intended change in coordination.
  */
@@ -48,4 +51,19 @@ public class Direction {
      * @return the name of the direction.
      */
     public String getDirName() {return directionName;}
+
+    /**
+     * Get the reverse of the direction.
+     * @return the reverse direction.
+     */
+    public Direction getReverse() {
+        List<String> allDirections = new ArrayList<>();
+        // Do not change the order.
+        allDirections.add("left");
+        allDirections.add("up");
+        allDirections.add("down");
+        allDirections.add("right");
+
+        return new Direction(allDirections.get(3 - allDirections.indexOf(getDirName())));
+    }
 }

@@ -25,7 +25,7 @@ public class Coordination implements Cloneable, Serializable {
      * @param another another coordination.
      * @return distance.
      */
-    private double distance(Coordination another) {
+    public double distance(Coordination another) {
         return new Point(x, y).distance(new Point(another.x, another.y));
     }
 
@@ -37,7 +37,7 @@ public class Coordination implements Cloneable, Serializable {
     public double minDistance(Coordination another) {
         Coordination leftMost = new Coordination(1, 9);
         Coordination rightMost = new Coordination(58, 9);
-        return Math.min(Math.min(distance(another), distance(leftMost) + leftMost.distance(another)), distance(rightMost) + rightMost.distance(another));
+        return Math.min(Math.min(distance(another), distance(leftMost) + rightMost.distance(another)), distance(rightMost) + leftMost.distance(another));
     }
 
     /**
@@ -62,5 +62,13 @@ public class Coordination implements Cloneable, Serializable {
      */
     public boolean isCrossing() {
         return (!((isSpace(x - 1, y) == isSpace(x + 1, y)) && (isSpace(x, y - 1) == isSpace(x, y + 1)))) || (isSpace(x - 1, y) && isSpace(x + 1, y) && isSpace(x, y - 1) && isSpace(x, y - 1));
+    }
+
+    /**
+     * Test if a physical address is in the ghost spawn area.
+     * @return if a physical address is in the ghost spawn area.
+     */
+    public boolean isGhostSpawnArea() {
+        return x >= Settings.spawnXMin && x <=Settings.spawnXMax && y >= Settings.spawnYMin && y <= Settings.spawnYMax;
     }
 }

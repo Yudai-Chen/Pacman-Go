@@ -3,6 +3,7 @@ package edu.rice.comp504.chaos.model.strategies;
 import edu.rice.comp504.chaos.model.Coordination;
 import edu.rice.comp504.chaos.model.Direction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,7 +18,8 @@ public class TargetStrategy implements IGhostStrategy {
      * @param target the target of the host.
      */
     public TargetStrategy(Coordination current, Coordination target) {
-
+        this.current = current;
+        this.target = target;
     }
     /**
      * Ghosts choose a direction which can make it approach the target in a shortest way.
@@ -25,7 +27,27 @@ public class TargetStrategy implements IGhostStrategy {
      * @return the chosen one.
      */
     @Override
-    public Direction choose(List<Direction> availableDirections) {
-        return null;
+    public Direction choose(Coordination current, List<Direction> availableDirections) {
+        Direction result = null;
+        double currentMin = Double.MAX_VALUE;
+        List<String> allDirections = new ArrayList<>();
+        // Do not change the order.
+        allDirections.add("up");
+        allDirections.add("left");
+        allDirections.add("down");
+        allDirections.add("right");
+        for (String dirName : allDirections) {
+            for (Direction direction : availableDirections) {
+                if (direction.getDirName().equals(dirName)) {
+                    Coordination coord = new Coordination(current.x + direction.getDirX(), current.y + direction.getDirY());
+                    if (coord.minDistance(target) < currentMin) {
+                        currentMin = coord.minDistance(target);
+                        result = direction;
+                    }
+                    break;
+                }
+            }
+        }
+        return result;
     }
 }

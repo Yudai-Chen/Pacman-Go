@@ -5,6 +5,9 @@ import edu.rice.comp504.chaos.model.Direction;
 import edu.rice.comp504.chaos.model.Settings;
 import edu.rice.comp504.chaos.model.Utilities;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 
 /**
  * The pacman which is controlled by the player.
@@ -12,6 +15,7 @@ import edu.rice.comp504.chaos.model.Utilities;
 public class Pacman extends AEntity {
     private int credit;
     private Direction playerAction;
+    private static PropertyChangeSupport pcs;
 
     /**
      * Constructor.
@@ -23,6 +27,7 @@ public class Pacman extends AEntity {
         super(startLoc, speed, size, new Direction(Settings.pacmanStartDir));
         credit = 0;
         playerAction = new Direction(Settings.pacmanStartDir);
+        pcs = new PropertyChangeSupport(this);
     }
 
     /**
@@ -56,7 +61,7 @@ public class Pacman extends AEntity {
             credit += 10;
             Utilities.setFoodMapItem(getCoord().x, getCoord().y, 0);
         } else if (Utilities.getFoodMapItem(getCoord().x, getCoord().y) == 2) {
-            //TODO:
+            pcs.firePropertyChange("frighten", true, false);
             credit += 50;
             Utilities.setFoodMapItem(getCoord().x, getCoord().y, 0);
         }
@@ -77,4 +82,15 @@ public class Pacman extends AEntity {
     private int getItemOnPlayerAction() {
         return Utilities.getMazeItem(getCoord().x + playerAction.getDirX(), getCoord().y + playerAction.getDirY());
     }
+
+    /**
+     * Add ghosts that will listen for a property change (i.e. energizer frighten).
+     * @param pcls The ghosts.
+     */
+    public void addListeners(PropertyChangeListener[] pcls) {
+        for (PropertyChangeListener pcl : pcls) {
+            pcs.addPropertyChangeListener("frighten", pcl);
+        }
+    }
+
 }
