@@ -21,6 +21,14 @@ public class TargetStrategy implements IGhostStrategy {
         this.current = current;
         this.target = target;
     }
+
+    /**
+     * Get the target.
+     * @return target.
+     */
+    public Coordination getTarget() {
+        return target;
+    }
     /**
      * Ghosts choose a direction which can make it approach the target in a shortest way.
      * @param availableDirections all available directions.

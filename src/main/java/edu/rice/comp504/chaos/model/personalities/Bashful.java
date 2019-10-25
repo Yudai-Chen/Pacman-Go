@@ -41,6 +41,10 @@ public class Bashful extends AGhostPersonality {
                 return new TargetStrategy(context.getCoord(), vEnd);
             case 3:
                 return new RandomStrategy();
+            case 4:
+                //TODO
+                Coordination resetTarget = new Coordination(36, 5);
+                return new TargetStrategy(context.getCoord(), resetTarget);
             default:return null;
         }
     }

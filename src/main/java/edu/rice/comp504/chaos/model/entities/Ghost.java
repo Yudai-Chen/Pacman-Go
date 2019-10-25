@@ -1,5 +1,6 @@
 package edu.rice.comp504.chaos.model.entities;
 
+import edu.rice.comp504.chaos.Debug;
 import edu.rice.comp504.chaos.model.Coordination;
 import edu.rice.comp504.chaos.model.Direction;
 import edu.rice.comp504.chaos.model.Settings;
@@ -28,6 +29,8 @@ public class Ghost extends AEntity implements PropertyChangeListener {
     private AGhostPersonality personality;
     //0:ready, 1:scatter, 2:chase, 3:frighten, 4:eaten
     private int state;
+    private int frightenTimeOut;
+    private Coordination _TARGET;
     /**
      * Constructor.
      *
@@ -43,7 +46,9 @@ public class Ghost extends AEntity implements PropertyChangeListener {
         this.isLocked = true;
         this.isEscaped = false;
         this.home = home;
+        this._TARGET = Utilities.coord2Loc(home);
         state = 0;
+        frightenTimeOut = 0;
         this.lockingTime = lockingTime;
         if (lockingTime == 0) {
             unLock();
@@ -119,6 +124,11 @@ public class Ghost extends AEntity implements PropertyChangeListener {
      */
     public void move() {
         lifetime++;
+        if (state == 3) {
+            if (frightenTimeOut != 0) {
+                frightenTimeOut--;
+            }
+        }
         if (isLocked && lifetime == lockingTime) {
             unLock();
         }
@@ -127,6 +137,11 @@ public class Ghost extends AEntity implements PropertyChangeListener {
                 if (getLoc().isRegularSpot()) {
                     if (getCoord().isCrossing()) {
                         setDirection(personality.think(this).choose(getCoord(), getAvailableDirections()));
+                        if (Debug.ENABLE) {
+                            if (state == 1 || state == 2) {
+                                _TARGET = Utilities.coord2Loc(((TargetStrategy) personality.think(this)).getTarget());
+                            }
+                        }
                     }
                     moveOnRegularSpot();
                 } else {
@@ -164,13 +179,41 @@ public class Ghost extends AEntity implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("period")) {
-            if ((Integer)evt.getOldValue() != 0) {
+            if ((Integer)evt.getOldValue() != 0 && (Integer)evt.getOldValue() != 3) {
                 setDirection(getDir().getReverse());
             }
             state = (Integer)evt.getNewValue();
+            setSpeed(Settings.ghostSpeed);
         } else if (evt.getPropertyName().equals("frighten")) {
             setDirection(getDir().getReverse());
             state = 3;
+            frightenTimeOut = (int)evt.getNewValue();
+            setSpeed(Settings.ghostFrightenedSpeed);
         }
+    }
+
+    /**
+     * The ghost is eaten by the pacman.
+     */
+    public void eaten() {
+        state = 4;
+        setSpeed(Settings.ghostEatenSpeed);
+    }
+
+    /**
+     * Rest the ghost to its initial location.
+     */
+    public void resetLoc() {
+        super.resetLoc();
+        this.isFrightened = false;
+        this.lifetime = 0;
+        this.isLocked = true;
+        this.isEscaped = false;
+        state = 0;
+        frightenTimeOut = 0;
+        if (lockingTime == 0) {
+            unLock();
+        }
+        this._TARGET = Utilities.coord2Loc(home);
     }
 }

@@ -6,6 +6,8 @@ var app;
 var updateInterval;
 var pacmanImg;
 var pacmanImgSrcPrefix = "./pacman/";
+var ghostImgSrcPrefix = "./ghost/";
+var otherImgSrcPrefix = "./other/";
 var keyCode = null;
 var isKeyDown = false;
 var pacmanAngle = 0;
@@ -15,7 +17,8 @@ var pinkGhostImg;
 var blueGhostImg;
 var yellowGhostImg;
 var frightenBlueGhostImg;
-var ghostImgSrcPrefix = "./ghost/";
+var frightenWhiteGhostImg;
+var readyImg;
 
 function logicToPhysical(lx,ly) {
     return {
@@ -162,10 +165,22 @@ function createApp(canvas) {
         context.restore();
     };
 
-    var drawGhost = function(state, name, direction, x, y, width, height) {
+    var drawGhost = function(state, name, direction, x, y, width, height, frightenTimeOut) {
         if (state === 3) {
             context.save();
-            context.drawImage(frightenBlueGhostImg, x, y, width, height);
+            if (frightenTimeOut >= 20) {
+                context.drawImage(frightenBlueGhostImg, x, y, width, height);
+            } else if (frightenTimeOut >= 16) {
+                    context.drawImage(frightenWhiteGhostImg, x, y, width, height);
+            } else if (frightenTimeOut >= 12) {
+                context.drawImage(frightenBlueGhostImg, x, y, width, height);
+            } else if (frightenTimeOut >= 8) {
+                context.drawImage(frightenWhiteGhostImg, x, y, width, height);
+            } else if (frightenTimeOut >= 4) {
+                context.drawImage(frightenBlueGhostImg, x, y, width, height);
+            } else {
+                context.drawImage(frightenWhiteGhostImg, x, y, width, height);
+            }
             context.restore();
             return;
         }
@@ -204,6 +219,44 @@ function createApp(canvas) {
         context.restore();
     };
 
+    var drawReady = function (src, x, y, width, height) {
+        context.save();
+        context.drawImage(src, x, y, width, height);
+        context.restore();
+    };
+
+    var drawTarget = function (x, y, color) {
+        context.save();
+        switch (color) {
+            case "red":
+                context.strokeStyle = "#FF0000";
+                break;
+            case "pink":
+                context.strokeStyle = "#FF99CC";
+                break;
+            case "blue":
+                context.strokeStyle = "#33FFFF";
+                break;
+            case "yellow":
+                context.strokeStyle = "#FFCC33";
+                break;
+        }
+        context.beginPath();
+        context.moveTo(x - 10, y - 10);
+        context.lineTo(x + 10, y + 10);
+        context.moveTo(x + 10, y - 10);
+        context.lineTo(x - 10, y + 10);
+        context.stroke();
+        context.restore();
+        context.closePath();
+        if (color === "yellow") {
+            context.beginPath();
+            context.arc(x, y, 160, 0, 2 * Math.PI, false);
+            context.stroke();
+            context.closePath();
+        }
+    };
+
     var clear = function() {
         context.clearRect(0,0, canvas.width, canvas.height);
     };
@@ -214,6 +267,8 @@ function createApp(canvas) {
         drawFoodMap: drawFoodMap,
         drawPacman: drawPacman,
         drawGhost: drawGhost,
+        drawReady: drawReady,
+        drawTarget: drawTarget,
         clear: clear,
         dims: {height: canvas.height, width: canvas.width}
     }
@@ -256,8 +311,12 @@ function loadImages() {
         yellowGhostImg[i] = new Image();
         yellowGhostImg[i].src = ghostImgSrcPrefix + "yellow_" + suffix;
     }
+    readyImg = new Image();
+    readyImg.src = otherImgSrcPrefix + "ready.png";
     frightenBlueGhostImg = new Image();
     frightenBlueGhostImg.src = ghostImgSrcPrefix + "frighten_blue.png";
+    frightenWhiteGhostImg = new Image();
+    frightenWhiteGhostImg.src = ghostImgSrcPrefix + "frighten_white.png";
 }
 
 window.onload = function() {
@@ -276,16 +335,28 @@ window.onload = function() {
         app.drawFoodMap(data.foodMap);
         app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
         data.ghosts.forEach(function(element) {
-            app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size);
+            app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
+            app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
         });
     }, "json");
+    app.drawReady(readyImg, 720, 200, 45, 7);
     setUpdateFreq();
+    $("#btn-pause").click(pause);
+    $("#btn-resume").click(resume);
 };
 
 /**
  * Determine how often the game updates occur.
  */
 function setUpdateFreq() {
+    updateInterval = setInterval("updateGame()", 100);
+}
+
+function pause() {
+    clearInterval(updateInterval);
+}
+
+function resume() {
     updateInterval = setInterval("updateGame()", 100);
 }
 
@@ -324,9 +395,15 @@ function updateGame() {
         } else if (data.pacman.dir.directionName === "down") {
             pacmanAngle = 1.5 * Math.PI;
         }
+        if (data.period === 0) {
+            app.drawReady(readyImg, 695, 225, 90, 15);
+        }
         app.drawPacman(pacmanImg[pacmanStage], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, pacmanAngle);
         data.ghosts.forEach(function(element) {
-            app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size);
+            app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
+            if (element.state !== 3) {
+                app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+            }
         });
     }, "json");
 }

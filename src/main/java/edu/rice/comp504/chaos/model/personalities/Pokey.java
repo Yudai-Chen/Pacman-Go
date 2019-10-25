@@ -1,5 +1,6 @@
 package edu.rice.comp504.chaos.model.personalities;
 
+import edu.rice.comp504.chaos.model.Coordination;
 import edu.rice.comp504.chaos.model.entities.Ghost;
 import edu.rice.comp504.chaos.model.entities.Pacman;
 import edu.rice.comp504.chaos.model.strategies.IGhostStrategy;
@@ -36,6 +37,10 @@ public class Pokey extends AGhostPersonality{
                 }
                 return new TargetStrategy(context.getCoord(), context.getHome());
             case 3: return new RandomStrategy();
+            case 4:
+                //TODO
+                Coordination resetTarget = new Coordination(36, 5);
+                return new TargetStrategy(context.getCoord(), resetTarget);
             default:return null;
         }
 

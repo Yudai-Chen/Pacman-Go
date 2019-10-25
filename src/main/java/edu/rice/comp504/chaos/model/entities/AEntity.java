@@ -13,7 +13,9 @@ import java.io.Serializable;
  */
 public abstract class AEntity implements Cloneable, Serializable {
     private Coordination loc;
+    private Coordination startLoc;
     private Direction dir;
+    private Direction startDir;
     private Coordination coord;
     private int speed;
     private int size;
@@ -27,34 +29,74 @@ public abstract class AEntity implements Cloneable, Serializable {
      */
     AEntity(Coordination startLoc, int speed, int size, Direction dir) {
         this.loc = startLoc;
+        this.startLoc = startLoc;
         this.speed = speed;
         this.size = size;
         this.dir = dir;
+        this.startDir = dir;
         this.coord = Utilities.loc2Coord(loc);
     }
 
-    Coordination getLoc() {
+    /**
+     * Get the location.
+     * @return the location.
+     */
+    public Coordination getLoc() {
         return loc;
     }
 
+    /**
+     * Get the initial location.
+     * @return the initial location.
+     */
+    private Coordination getStartLoc() {
+        return startLoc;
+    }
+
+    /**
+     * Set the location.
+     * @param loc the location.
+     */
+    private void setLoc(Coordination loc) {
+        this.loc = loc;
+    }
+
+    /**
+     * Get the coordination.
+     * @return the coordination.
+     */
     public Coordination getCoord() {
         return coord;
     }
 
+    /**
+     * Get the direction.
+     * @return the direction.
+     */
     public Direction getDir() {
         return dir;
     }
 
     /**
+     * Set the speed of the entity.
+     * @param speed the speed.
+     */
+    void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    /**
+     * Set the direction.
+     * @param dir the direction.
+     */
+    public void setDir(Direction dir) {
+        this.dir = dir;
+    }
+
+    /**
      * Move to intended destination or stop.
      */
-    public void move() {
-        if (loc.isRegularSpot()) {
-            moveOnRegularSpot();
-        } else {
-            move(computeIntendedDestination());
-        }
-    }
+    abstract public void move();
 
     /**
      * Move on the regular spot. Regular spot is the center of each unit cell of the canvas.
@@ -93,7 +135,29 @@ public abstract class AEntity implements Cloneable, Serializable {
      * @return the intended destination.
      */
     Coordination computeIntendedDestination() {
-        return new Coordination(loc.x + speed * dir.getDirX(), loc.y + speed * dir.getDirY());
+        int oldX = loc.x;
+        int oldY = loc.y;
+        int x = loc.x + speed * dir.getDirX();
+        int y = loc.y + speed * dir.getDirY();
+        if ((x - 10) / 20 != (oldX - 10) / 20) {
+            if (x > oldX) {
+                x = (x - 10) / 20 * 20 + 10;
+            } else {
+                if ((oldX - 10) % 20 != 0) {
+                    x = ((x - 10) / 20 + 1) * 20 + 10;
+                }
+            }
+        }
+        if ((y - 10) / 20 != (oldY - 10) / 20) {
+            if (y > oldY) {
+                y = (y - 10) / 20 * 20 + 10;
+            } else {
+                if ((oldY - 10) % 20 != 0) {
+                    y = ((y - 10) / 20 + 1) * 20 + 10;
+                }
+            }
+        }
+        return new Coordination(x, y);
     }
 
     /**
@@ -110,5 +174,13 @@ public abstract class AEntity implements Cloneable, Serializable {
      */
     private int getItemOnIntendedDirection() {
         return Utilities.getMazeItem(coord.x + dir.getDirX(), coord.y + dir.getDirY());
+    }
+
+    /**
+     * Rest the entity to its initial location.
+     */
+    public void resetLoc() {
+        setLoc(getStartLoc());
+        setDirection(startDir);
     }
 }

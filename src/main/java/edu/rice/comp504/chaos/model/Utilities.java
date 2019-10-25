@@ -41,9 +41,9 @@ public class Utilities {
     private static int[][] loadMap(String mapFileLocation) throws IOException {
         File file = new File(mapFileLocation);
         if (!file.exists()) {
-            System.out.println(111);
             throw new RuntimeException("Map file not found.");
         }
+
         BufferedReader br = new BufferedReader(new FileReader(file));
         String str;
         List<int[]> list = new ArrayList<>();

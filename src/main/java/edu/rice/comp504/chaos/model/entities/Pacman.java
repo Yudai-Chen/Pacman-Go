@@ -1,9 +1,6 @@
 package edu.rice.comp504.chaos.model.entities;
 
-import edu.rice.comp504.chaos.model.Coordination;
-import edu.rice.comp504.chaos.model.Direction;
-import edu.rice.comp504.chaos.model.Settings;
-import edu.rice.comp504.chaos.model.Utilities;
+import edu.rice.comp504.chaos.model.*;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -23,11 +20,12 @@ public class Pacman extends AEntity {
      * @param speed the speed of pacman.
      * @param size the size of pacman.
      */
-    public Pacman(Coordination startLoc, int speed, int size) {
+    public Pacman(Game game, Coordination startLoc, int speed, int size) {
         super(startLoc, speed, size, new Direction(Settings.pacmanStartDir));
         credit = 0;
         playerAction = new Direction(Settings.pacmanStartDir);
         pcs = new PropertyChangeSupport(this);
+        pcs.addPropertyChangeListener("timerPause", game);
     }
 
     /**
@@ -61,7 +59,8 @@ public class Pacman extends AEntity {
             credit += 10;
             Utilities.setFoodMapItem(getCoord().x, getCoord().y, 0);
         } else if (Utilities.getFoodMapItem(getCoord().x, getCoord().y) == 2) {
-            pcs.firePropertyChange("frighten", true, false);
+            pcs.firePropertyChange("frighten", 0, Settings.frightenedLast);
+            pcs.firePropertyChange("timerPause", 0, Settings.frightenedLast);
             credit += 50;
             Utilities.setFoodMapItem(getCoord().x, getCoord().y, 0);
         }
@@ -93,4 +92,11 @@ public class Pacman extends AEntity {
         }
     }
 
+    /**
+     * Rest the pac-man to its initial location.
+     */
+    public void resetLoc() {
+        super.resetLoc();
+        playerAction = new Direction(Settings.pacmanStartDir);
+    }
 }
