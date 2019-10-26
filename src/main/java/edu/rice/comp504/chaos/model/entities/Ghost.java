@@ -137,15 +137,15 @@ public class Ghost extends AEntity implements PropertyChangeListener {
                 if (getLoc().isRegularSpot()) {
                     if (getCoord().isCrossing()) {
                         setDirection(personality.think(this).choose(getCoord(), getAvailableDirections()));
-                        if (Debug.ENABLE) {
-                            if (state == 1 || state == 2) {
-                                _TARGET = Utilities.coord2Loc(((TargetStrategy) personality.think(this)).getTarget());
-                            }
-                        }
                     }
                     moveOnRegularSpot();
                 } else {
                     move(computeIntendedDestination());
+                }
+                if (Debug.ENABLE) {
+                    if (state == 1 || state == 2) {
+                        _TARGET = Utilities.coord2Loc(((TargetStrategy) personality.think(this)).getTarget());
+                    }
                 }
             } else {
                 if ((getLoc().y - 10) % 20 == 0) {
