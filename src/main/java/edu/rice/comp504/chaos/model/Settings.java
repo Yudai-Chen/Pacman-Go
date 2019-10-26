@@ -14,7 +14,7 @@ public class Settings {
     static int readyTime = 20, scatterTime1 = 90, chaseTime1 = 290, scatterTime2 = 360, chaseTime2 = 560, scatterTime3 = 610, chaseTime3 = 810, scatterTime4 = 860;
 
     static int pacmanStartLocX = 740, pacmanStartLocY = 330;
-    static int pacmanSpeed = 6, pacmanSize = 30;
+    static int pacmanSpeed = 5, pacmanSize = 30;
     public static String pacmanStartDir = "left";
 
     static int redStartLocX = 740, redStartLocY = 110, redHomeCoordX = 52, redHomeCoordY = 0;
@@ -23,7 +23,7 @@ public class Settings {
     static int yellowStartLocX = 780, yellowStartLocY = 170, yellowHomeCoordX = 0, yellowHomeCoordY = 20;
     static String redGhostStartDir = "left", pinkGhostStartDir = "down", blueGhostStartDir = "up", yellowGhostStartDir = "up";
     static int redLockingTime = 0, pinkLockingTime = 8, blueLockingTime = 43, yellowLockingTime = 85;
-    public static int ghostSpeed = 6, ghostFrightenedSpeed = 5, ghostEatenSpeed = 5, ghostSize = 30;
+    public static int ghostSpeed = 5, ghostFrightenedSpeed = 3, ghostEatenSpeed = 20, ghostSize = 30;
     public static int frightenedLast = 80;
 
     static int eatPauseTime = 10;

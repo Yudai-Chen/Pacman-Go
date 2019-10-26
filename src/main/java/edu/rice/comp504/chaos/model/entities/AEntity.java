@@ -19,6 +19,7 @@ public abstract class AEntity implements Cloneable, Serializable {
     private Coordination coord;
     private int speed;
     private int size;
+    private int remainLength;
 
     /**
      * Constructor.
@@ -35,6 +36,7 @@ public abstract class AEntity implements Cloneable, Serializable {
         this.dir = dir;
         this.startDir = dir;
         this.coord = Utilities.loc2Coord(loc);
+        this.remainLength = 0;
     }
 
     /**
@@ -103,6 +105,8 @@ public abstract class AEntity implements Cloneable, Serializable {
      */
     void moveOnRegularSpot() {
         if (getItemOnIntendedDirection() == 0) {
+            move(this.remainLength);
+            this.remainLength = 0;
             move(computeIntendedDestination());
         } else if (getItemOnIntendedDirection() == 9) {
             if (getCoord().x == 1) {
@@ -111,6 +115,14 @@ public abstract class AEntity implements Cloneable, Serializable {
                 moveToCoord(new Coordination(1, 9));
             }
         }
+    }
+
+    /**
+     * Move a certain length.
+     * @param length the length.
+     */
+    private void move(int length) {
+        move(new Coordination(this.loc.x + dir.getDirX() * length, this.loc.y + dir.getDirY() * length));
     }
 
     /**
@@ -141,18 +153,23 @@ public abstract class AEntity implements Cloneable, Serializable {
         int y = loc.y + speed * dir.getDirY();
         if ((x - 10) / 20 != (oldX - 10) / 20) {
             if (x > oldX) {
+                this.remainLength = x - ((x - 10) / 20 * 20 + 10);
                 x = (x - 10) / 20 * 20 + 10;
+
             } else {
                 if ((oldX - 10) % 20 != 0) {
+                    this.remainLength = ((x - 10) / 20 + 1) * 20 + 10 - x;
                     x = ((x - 10) / 20 + 1) * 20 + 10;
                 }
             }
         }
         if ((y - 10) / 20 != (oldY - 10) / 20) {
             if (y > oldY) {
+                this.remainLength = y - ((y - 10) / 20 * 20 + 10);
                 y = (y - 10) / 20 * 20 + 10;
             } else {
                 if ((oldY - 10) % 20 != 0) {
+                    this.remainLength = ((y - 10) / 20 + 1) * 20 + 10 - y;
                     y = ((y - 10) / 20 + 1) * 20 + 10;
                 }
             }
