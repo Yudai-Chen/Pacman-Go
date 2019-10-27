@@ -305,6 +305,14 @@ function createApp(canvas) {
 
     };
 
+    var drawText = function(text, x, y) {
+        context.save();
+        context.fillStyle = '#FFFFFF'; // 文本颜色
+        context.font = '20px Airal'; // 文本字号、字体著作权归作者所有。
+        context.fillText(text, x, y);
+        context.restore();
+    };
+
     var clear = function() {
         context.clearRect(0,0, canvas.width, canvas.height);
     };
@@ -320,6 +328,7 @@ function createApp(canvas) {
         drawOver: drawOver,
         drawCredit: drawCredit,
         drawTarget: drawTarget,
+        drawText: drawText,
         clear: clear,
         dims: {height: canvas.height, width: canvas.width}
     }
@@ -397,6 +406,7 @@ window.onload = function() {
     });
     app = createApp(document.querySelector("canvas"));
     app.drawBackground();
+    app.drawText("Powered by Team Chaos.", 500, 20);
     $.post("/PacManGo/load", $("#map option:selected").val(), function (data) {
         app.drawMaze(data.maze, data.mapid);
         app.drawFoodMap(data.foodMap);
@@ -405,6 +415,7 @@ window.onload = function() {
             app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
             app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
         });
+        app.drawText(data.pacman.credit, 20, 20);
     }, "json");
     app.drawReady(readyImg, 720, 200, 45, 7);
     setUpdateFreq();
@@ -424,6 +435,7 @@ function restart() {
             app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
             app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
         });
+        app.drawText(data.pacman.credit, 20, 20);
     }, "json");
 }
 
@@ -466,8 +478,10 @@ function updateGame() {
     $.get("/PacManGo/update", function(data) {
         app.clear();
         app.drawBackground();
+        app.drawText("Powered by Team Chaos.", 500, 20);
         app.drawMaze(data.maze, data.mapid);
         app.drawFoodMap(data.foodMap);
+        app.drawText(data.pacman.credit, 20, 20);
         if (data.life > 0) {
             for (var t = 0; t < data.life - 1; t++) {
                 app.drawPacman(pacmanImg[1], 20 + t * 40, 360, data.pacman.size, data.pacman.size, 0);
