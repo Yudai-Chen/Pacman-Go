@@ -30,12 +30,18 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
     private int dyingTimeOut = 0;
     private int currentGhostCredit = 100;
     private int life;
+    private int totalDots;
+    private int remainingDots;
+    private int level;
     /**
      * Constructor. Initialize the map.
      */
     public Game() {
+        this.level = 1;
+        this.remainingDots = 0;
         this.mapid = 1;
         loadMap(mapid);
+        this.totalDots = remainingDots;
 
         pcs = new PropertyChangeSupport(this);
         pacman = new Pacman(this, new Coordinate(Settings.pacmanStartLocX, Settings.pacmanStartLocY), Settings.pacmanSpeed, Settings.pacmanSize);
@@ -67,9 +73,19 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
         pcs.addPropertyChangeListener("clock", timer);
     }
 
-    public void reset(int mapid) {
+    public void reset(int mapid, int level) {
+        this.level = level;
+        this.timerPauseTimeOut = 0;
+        this.gamePause = false;
+        this.gamePauseTimeOut = 0;
+        this.dying = false;
+        this.dyingTimeOut = 0;
+        this.currentGhostCredit = 100;
+        this.remainingDots = 0;
+        this.totalDots = 0;
         this.mapid = mapid;
         loadMap(mapid);
+        this.totalDots = remainingDots;
 
         pcs = new PropertyChangeSupport(this);
         pacman = new Pacman(this, new Coordinate(Settings.pacmanStartLocX, Settings.pacmanStartLocY), Settings.pacmanSpeed, Settings.pacmanSize);
@@ -114,6 +130,13 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
         } catch (IOException e) {
             e.printStackTrace();
         }
+        for (int [] row : maze) {
+            for (int item : row) {
+                if (item == 1) {
+                    remainingDots++;
+                }
+            }
+        }
     }
 
     /**
@@ -155,6 +178,10 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
                             pacman.addCredit(currentGhostCredit);
                         }
                     }
+                }
+                remainingDots = totalDots - pacman.getEatenDots();
+                if (remainingDots == 0) {
+                    reset(mapid, level + 1);
                 }
             } else {
                 if (gamePauseTimeOut == 0) {

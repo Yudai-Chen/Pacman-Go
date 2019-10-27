@@ -11,6 +11,7 @@ import java.beans.PropertyChangeSupport;
  */
 public class Pacman extends AEntity {
     private int credit;
+    private int eatenDots;
     private Direction playerAction;
     private static PropertyChangeSupport pcs;
 
@@ -23,6 +24,7 @@ public class Pacman extends AEntity {
     public Pacman(Game game, Coordinate startLoc, int speed, int size) {
         super(startLoc, speed, size, new Direction(Settings.pacmanStartDir));
         credit = 0;
+        eatenDots = 0;
         playerAction = new Direction(Settings.pacmanStartDir);
         pcs = new PropertyChangeSupport(this);
         pcs.addPropertyChangeListener("timerPause", game);
@@ -52,11 +54,20 @@ public class Pacman extends AEntity {
     }
 
     /**
+     * Get the amount of dots that the pac-man has already eaten.
+     * @return the amount of dots that the pac-man has already eaten.
+     */
+    public int getEatenDots() {
+        return eatenDots;
+    }
+
+    /**
      * Take food and earn credit.
      */
     private void earnCredit() {
         if (Utilities.getFoodMapItem(getCoord().x, getCoord().y) == 1) {
             credit += 10;
+            eatenDots++;
             Utilities.setFoodMapItem(getCoord().x, getCoord().y, 0);
         } else if (Utilities.getFoodMapItem(getCoord().x, getCoord().y) == 2) {
             pcs.firePropertyChange("frighten", 0, Settings.frightenedLast);
