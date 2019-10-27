@@ -29,12 +29,12 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
     private boolean dying = false;
     private int dyingTimeOut = 0;
     private int currentGhostCredit = 100;
+    private int life;
     /**
      * Constructor. Initialize the map.
      */
     public Game() {
-        mapid = 1;
-
+        this.mapid = 1;
         loadMap(mapid);
 
         pcs = new PropertyChangeSupport(this);
@@ -63,6 +63,41 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
 
         timer = new Timer();
         period = 0;
+        this.life = 3;
+        pcs.addPropertyChangeListener("clock", timer);
+    }
+
+    public void reset(int mapid) {
+        this.mapid = mapid;
+        loadMap(mapid);
+
+        pcs = new PropertyChangeSupport(this);
+        pacman = new Pacman(this, new Coordinate(Settings.pacmanStartLocX, Settings.pacmanStartLocY), Settings.pacmanSpeed, Settings.pacmanSize);
+        ghosts = new Ghost[4];
+        ghosts[0] = new Ghost("red", new Coordinate(Settings.redStartLocX, Settings.redStartLocY), Settings.ghostSpeed, Settings.ghostSize, new Direction(Settings.redGhostStartDir), new Coordinate(Settings.redHomeCoordX, Settings.redHomeCoordY), Settings.redLockingTime);
+        AGhostPersonality chase = new Chaser(pacman);
+        ghosts[0].setPersonality(chase);
+
+        ghosts[1] = new Ghost("pink", new Coordinate(Settings.pinkStartLocX, Settings.pinkStartLocY), Settings.ghostSpeed, Settings.ghostSize, new Direction(Settings.pinkGhostStartDir), new Coordinate(Settings.pinkHomeCoordX, Settings.pinkHomeCoordY), Settings.pinkLockingTime);
+        AGhostPersonality ambusher = new Ambusher(pacman);
+        ghosts[1].setPersonality(ambusher);
+
+        ghosts[2] = new Ghost("blue", new Coordinate(Settings.blueStartLocX, Settings.blueStartLocY), Settings.ghostSpeed, Settings.ghostSize, new Direction(Settings.blueGhostStartDir), new Coordinate(Settings.blueHomeCoordX, Settings.blueHomeCoordY), Settings.blueLockingTime);
+        AGhostPersonality bashful = new Bashful(pacman, ghosts[0]);
+        ghosts[2].setPersonality(bashful);
+
+        ghosts[3] = new Ghost("yellow", new Coordinate(Settings.yellowStartLocX, Settings.yellowStartLocY), Settings.ghostSpeed, Settings.ghostSize, new Direction(Settings.yellowGhostStartDir), new Coordinate(Settings.yellowHomeCoordX, Settings.yellowHomeCoordY), Settings.yellowLockingTime);
+        AGhostPersonality pokey = new Pokey(pacman);
+        ghosts[3].setPersonality(pokey);
+
+        pacman.addListeners(ghosts);
+        for (Ghost ghost : ghosts) {
+            pcs.addPropertyChangeListener("period", ghost);
+        }
+
+        timer = new Timer();
+        period = 0;
+        this.life = 3;
         pcs.addPropertyChangeListener("clock", timer);
     }
 
@@ -70,7 +105,7 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
      * Load maze and food maps.
      * @param mapid map id.
      */
-    void loadMap(int mapid) {
+    private void loadMap(int mapid) {
         try {
             Utilities.loadStaticMaze(Settings.mapFileLocation + "/map" + mapid + ".txt");
             Utilities.loadStaticFoodMap(Settings.mapFileLocation + "/foodmap" + mapid + ".txt");
@@ -134,6 +169,7 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
             }
         } else {
             if (dyingTimeOut == 0) {
+                life--;
                 dying = false;
                 pacman.resetLoc();
                 timer.reset();

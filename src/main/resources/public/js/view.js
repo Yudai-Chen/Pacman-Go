@@ -22,6 +22,7 @@ var frightenBlueGhostImg;
 var frightenWhiteGhostImg;
 var creditImg;
 var readyImg;
+var overImg;
 var dyingImg;
 
 function logicToPhysical(lx,ly) {
@@ -42,7 +43,7 @@ function createApp(canvas) {
     var _COS = [1,0,-1,0];
     var _SIN = [0,1,0,-1];
 
-    var drawMaze = function(map) {
+    var drawMaze = function(map, id) {
         context.lineWidth = 2;
         for (var j = 1; j < map.length - 1; j++) {
             for (var i = 1; i < map[j].length - 1; i++) {
@@ -121,15 +122,17 @@ function createApp(canvas) {
                                 });
                         }
                     }
-                    context.strokeStyle = "#D60022";
-                    context.beginPath();
-                    context.moveTo(980, 150);
-                    context.lineTo(1010, 150);
-                    context.arc(1010, 160, 10, -.5 * Math.PI, .5 * Math.PI, false);
-                    context.lineTo(980, 170);
-                    context.arc(980, 160, 10, .5 * Math.PI, 1.5 * Math.PI, false);
-                    context.stroke();
-                    context.closePath();
+                    if (id === 1) {
+                        context.strokeStyle = "#D60022";
+                        context.beginPath();
+                        context.moveTo(980, 150);
+                        context.lineTo(1010, 150);
+                        context.arc(1010, 160, 10, -.5 * Math.PI, .5 * Math.PI, false);
+                        context.lineTo(980, 170);
+                        context.arc(980, 160, 10, .5 * Math.PI, 1.5 * Math.PI, false);
+                        context.stroke();
+                        context.closePath();
+                    }
                 }
             }
         }
@@ -241,6 +244,12 @@ function createApp(canvas) {
         context.restore();
     };
 
+    var drawOver = function (x, y, width, height) {
+        context.save();
+        context.drawImage(overImg, x, y, width, height);
+        context.restore();
+    };
+
     var drawCredit = function (credit, x, y, width, height) {
         var src;
         switch (credit) {
@@ -284,15 +293,16 @@ function createApp(canvas) {
         context.lineTo(x + 10, y + 10);
         context.moveTo(x + 10, y - 10);
         context.lineTo(x - 10, y + 10);
-        context.stroke();
-        context.restore();
         context.closePath();
         if (color === "yellow") {
             context.beginPath();
             context.arc(x, y, 160, 0, 2 * Math.PI, false);
-            context.stroke();
             context.closePath();
         }
+        context.stroke();
+        context.restore();
+
+
     };
 
     var clear = function() {
@@ -307,6 +317,7 @@ function createApp(canvas) {
         drawDying: drawDying,
         drawGhost: drawGhost,
         drawReady: drawReady,
+        drawOver: drawOver,
         drawCredit: drawCredit,
         drawTarget: drawTarget,
         clear: clear,
@@ -367,6 +378,8 @@ function loadImages() {
     }
     readyImg = new Image();
     readyImg.src = otherImgSrcPrefix + "ready.png";
+    overImg = new Image();
+    overImg.src = otherImgSrcPrefix + "over.png";
     frightenBlueGhostImg = new Image();
     frightenBlueGhostImg.src = ghostImgSrcPrefix + "frighten_blue.png";
     frightenWhiteGhostImg = new Image();
@@ -384,8 +397,8 @@ window.onload = function() {
     });
     app = createApp(document.querySelector("canvas"));
     app.drawBackground();
-    $.get("/PacManGo/load",function (data) {
-        app.drawMaze(data.maze);
+    $.post("/PacManGo/load", $("#map option:selected").val(), function (data) {
+        app.drawMaze(data.maze, data.mapid);
         app.drawFoodMap(data.foodMap);
         app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
         data.ghosts.forEach(function(element) {
@@ -397,7 +410,22 @@ window.onload = function() {
     setUpdateFreq();
     $("#btn-pause").click(pause);
     $("#btn-resume").click(resume);
+    $("#btn-map").click(restart);
+    $("#btn-restart").click(restart);
 };
+
+
+function restart() {
+    $.post("/PacManGo/load", $("#map option:selected").val(), function (data) {
+        app.drawMaze(data.maze, data.mapid);
+        app.drawFoodMap(data.foodMap);
+        app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
+        data.ghosts.forEach(function(element) {
+            app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
+            app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+        });
+    }, "json");
+}
 
 /**
  * Determine how often the game updates occur.
@@ -438,8 +466,16 @@ function updateGame() {
     $.get("/PacManGo/update", function(data) {
         app.clear();
         app.drawBackground();
-        app.drawMaze(data.maze);
+        app.drawMaze(data.maze, data.mapid);
         app.drawFoodMap(data.foodMap);
+        if (data.life > 0) {
+            for (var t = 0; t < data.life - 1; t++) {
+                app.drawPacman(pacmanImg[1], 20 + t * 40, 360, data.pacman.size, data.pacman.size, 0);
+            }
+        } else {
+            app.drawOver(680, 220, 120, 20);
+            return;
+        }
         if (data.pacman.dir.directionName === "left") {
             pacmanAngle = 0;
         } else if (data.pacman.dir.directionName === "up") {

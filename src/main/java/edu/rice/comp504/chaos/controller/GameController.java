@@ -18,7 +18,10 @@ public class GameController implements SparkApplication {
         staticFiles.location("/public");
         Gson gson = new Gson();
         Game game = new Game();
-        get("/load", (request, response) -> gson.toJson(game));
+        post("/load", (request, response) -> {
+            game.reset(Integer.parseInt(request.body()));
+            return gson.toJson(game);
+        });
         get("/update", (request, response) -> {
             game.update();
             return gson.toJson(game);
