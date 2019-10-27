@@ -16,11 +16,11 @@ public class Pacman extends AEntity {
 
     /**
      * Constructor.
-     * @param startLoc the initial coordination of pacman.
+     * @param startLoc the initial Coordinate of pacman.
      * @param speed the speed of pacman.
      * @param size the size of pacman.
      */
-    public Pacman(Game game, Coordination startLoc, int speed, int size) {
+    public Pacman(Game game, Coordinate startLoc, int speed, int size) {
         super(startLoc, speed, size, new Direction(Settings.pacmanStartDir));
         credit = 0;
         playerAction = new Direction(Settings.pacmanStartDir);
@@ -38,9 +38,9 @@ public class Pacman extends AEntity {
                 move(computeIntendedDestination());
             } else if (getItemOnPlayerAction() == 9) {
                 if (getCoord().x == 1) {
-                    moveToCoord(new Coordination(58, 9));
+                    moveToCoord(new Coordinate(58, 9));
                 } else {
-                    moveToCoord(new Coordination(1, 9));
+                    moveToCoord(new Coordinate(1, 9));
                 }
             } else {
                 moveOnRegularSpot();
@@ -61,9 +61,18 @@ public class Pacman extends AEntity {
         } else if (Utilities.getFoodMapItem(getCoord().x, getCoord().y) == 2) {
             pcs.firePropertyChange("frighten", 0, Settings.frightenedLast);
             pcs.firePropertyChange("timerPause", 0, Settings.frightenedLast);
+            setSpeed(Settings.pacmanEnergizedSpeed);
             credit += 50;
             Utilities.setFoodMapItem(getCoord().x, getCoord().y, 0);
         }
+    }
+
+    /**
+     * Add some credit to the pac-man.
+     * @param credit the added credit.
+     */
+    public void addCredit(int credit) {
+        this.credit += credit;
     }
 
     /**

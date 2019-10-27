@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The intended change in coordination.
+ * The intended change in Coordinate.
  */
 public class Direction {
-    private Coordination dir;
+    private Coordinate dir;
     private String directionName;
     /**
      * Constructor.
@@ -17,19 +17,19 @@ public class Direction {
         this.directionName = directionName;
         switch (directionName) {
             case "left":
-                dir = new Coordination(-1, 0);
+                dir = new Coordinate(-1, 0);
                 break;
             case "up":
-                dir = new Coordination(0, -1);
+                dir = new Coordinate(0, -1);
                 break;
             case "right":
-                dir = new Coordination(1, 0);
+                dir = new Coordinate(1, 0);
                 break;
             case "down":
-                dir = new Coordination(0, 1);
+                dir = new Coordinate(0, 1);
                 break;
             default:
-                dir = new Coordination(0, 0);
+                dir = new Coordinate(0, 0);
                 break;
         }
     }

@@ -4,39 +4,39 @@ import java.awt.*;
 import java.io.Serializable;
 
 /**
- * The 2-dimension coordination. A pair of int. Can be logical or physical.
+ * The 2-dimension Coordinate. A pair of int. Can be logical or physical.
  */
-public class Coordination implements Cloneable, Serializable {
+public class Coordinate implements Cloneable, Serializable {
     public int x;
     public int y;
 
     /**
      * Constructor.
-     * @param x x-coordination.
-     * @param y y-coordination.
+     * @param x x-Coordinate.
+     * @param y y-Coordinate.
      */
-    public Coordination(int x, int y) {
+    public Coordinate(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
     /**
-     * Get the distance to another coordination.
-     * @param another another coordination.
+     * Get the distance to another Coordinate.
+     * @param another another Coordinate.
      * @return distance.
      */
-    public double distance(Coordination another) {
+    public double distance(Coordinate another) {
         return new Point(x, y).distance(new Point(another.x, another.y));
     }
 
     /**
-     * Get the minimum distance to another coordination in the maze.
-     * @param another another coordination.
+     * Get the minimum distance to another Coordinate in the maze.
+     * @param another another Coordinate.
      * @return min distance.
      */
-    public double minDistance(Coordination another) {
-        Coordination leftMost = new Coordination(1, 9);
-        Coordination rightMost = new Coordination(58, 9);
+    public double minDistance(Coordinate another) {
+        Coordinate leftMost = new Coordinate(1, 9);
+        Coordinate rightMost = new Coordinate(58, 9);
         return Math.min(Math.min(distance(another), distance(leftMost) + rightMost.distance(another)), distance(rightMost) + leftMost.distance(another));
     }
 
@@ -49,7 +49,7 @@ public class Coordination implements Cloneable, Serializable {
     }
 
     /**
-     * If a coordination (x, y) in the maze is space (including inner space or border).
+     * If a Coordinate (x, y) in the maze is space (including inner space or border).
      * @return if it is a space.
      */
     private boolean isSpace(int x, int y) {

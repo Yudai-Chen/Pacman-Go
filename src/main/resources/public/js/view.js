@@ -7,6 +7,7 @@ var updateInterval;
 var pacmanImg;
 var pacmanImgSrcPrefix = "./pacman/";
 var ghostImgSrcPrefix = "./ghost/";
+var creditImgSrcPrefix = "./credit/";
 var otherImgSrcPrefix = "./other/";
 var keyCode = null;
 var isKeyDown = false;
@@ -16,9 +17,12 @@ var redGhostImg;
 var pinkGhostImg;
 var blueGhostImg;
 var yellowGhostImg;
+var eyeGhostImg;
 var frightenBlueGhostImg;
 var frightenWhiteGhostImg;
+var creditImg;
 var readyImg;
+var dyingImg;
 
 function logicToPhysical(lx,ly) {
     return {
@@ -165,6 +169,15 @@ function createApp(canvas) {
         context.restore();
     };
 
+    var drawDying = function(timeOut, x, y, width, height) {
+        if (timeOut === 0) {
+            timeOut = 1;
+        }
+        context.save();
+        context.drawImage(dyingImg[11 - timeOut], x, y, width, height);
+        context.restore();
+    };
+
     var drawGhost = function(state, name, direction, x, y, width, height, frightenTimeOut) {
         if (state === 3) {
             context.save();
@@ -199,6 +212,9 @@ function createApp(canvas) {
                 imgSet = yellowGhostImg;
                 break;
         }
+        if (state === 4) {
+            imgSet = eyeGhostImg;
+        }
         var index;
         switch (direction) {
             case "left":
@@ -220,6 +236,28 @@ function createApp(canvas) {
     };
 
     var drawReady = function (src, x, y, width, height) {
+        context.save();
+        context.drawImage(src, x, y, width, height);
+        context.restore();
+    };
+
+    var drawCredit = function (credit, x, y, width, height) {
+        var src;
+        switch (credit) {
+            case 200:
+                src = creditImg[0];
+                break;
+            case 400:
+                src = creditImg[1];
+                break;
+            case 800:
+                src = creditImg[2];
+                break;
+            case 1600:
+                src = creditImg[3];
+                break;
+
+        }
         context.save();
         context.drawImage(src, x, y, width, height);
         context.restore();
@@ -266,8 +304,10 @@ function createApp(canvas) {
         drawMaze: drawMaze,
         drawFoodMap: drawFoodMap,
         drawPacman: drawPacman,
+        drawDying: drawDying,
         drawGhost: drawGhost,
         drawReady: drawReady,
+        drawCredit: drawCredit,
         drawTarget: drawTarget,
         clear: clear,
         dims: {height: canvas.height, width: canvas.width}
@@ -286,8 +326,12 @@ function loadImages() {
     pinkGhostImg = [];
     blueGhostImg = [];
     yellowGhostImg = [];
+    eyeGhostImg = [];
+    creditImg = [];
+    var credit = 100;
     for (var i = 0; i < 4; i++) {
         var suffix;
+        credit = credit * 2;
         switch (i) {
             case 0:
                 suffix = "left.png";
@@ -302,6 +346,8 @@ function loadImages() {
                 suffix = "down.png";
                 break;
         }
+        creditImg[i] = new Image();
+        creditImg[i].src = creditImgSrcPrefix + credit + ".png";
         redGhostImg[i] = new Image();
         redGhostImg[i].src = ghostImgSrcPrefix + "red_" + suffix;
         pinkGhostImg[i] = new Image();
@@ -310,6 +356,14 @@ function loadImages() {
         blueGhostImg[i].src = ghostImgSrcPrefix + "blue_" + suffix;
         yellowGhostImg[i] = new Image();
         yellowGhostImg[i].src = ghostImgSrcPrefix + "yellow_" + suffix;
+        eyeGhostImg[i] = new Image();
+        eyeGhostImg[i].src = ghostImgSrcPrefix + "eye_" + suffix;
+    }
+    dyingImg = [];
+    for (var j = 0; j < 11; j++) {
+        var code = j + 1;
+        dyingImg[j] = new Image();
+        dyingImg[j].src = pacmanImgSrcPrefix + "dying_" + code + ".png";
     }
     readyImg = new Image();
     readyImg.src = otherImgSrcPrefix + "ready.png";
@@ -398,12 +452,25 @@ function updateGame() {
         if (data.period === 0) {
             app.drawReady(readyImg, 695, 225, 90, 15);
         }
-        app.drawPacman(pacmanImg[pacmanStage], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, pacmanAngle);
-        data.ghosts.forEach(function(element) {
-            app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
-            if (element.state !== 3) {
-                app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+        if (data.dying) {
+            app.drawDying(data.dyingTimeOut, data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size);
+        } else {
+            if (data.gamePause !== true) {
+                app.drawPacman(pacmanImg[pacmanStage], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, pacmanAngle);
             }
-        });
+            if (!data.dying) {
+                data.ghosts.forEach(function (element) {
+                    if (element.eating) {
+                        app.drawCredit(data.currentGhostCredit, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size);
+                    } else {
+                        app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
+                    }
+                    if (element.state !== 3) {
+                        app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+                    }
+                });
+            }
+        }
     }, "json");
+
 }

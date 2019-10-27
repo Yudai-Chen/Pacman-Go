@@ -1,6 +1,6 @@
 package edu.rice.comp504.chaos.model.strategies;
 
-import edu.rice.comp504.chaos.model.Coordination;
+import edu.rice.comp504.chaos.model.Coordinate;
 import edu.rice.comp504.chaos.model.Direction;
 
 import java.util.List;
@@ -15,5 +15,5 @@ public interface IGhostStrategy {
      * @param availableDirections all available directions.
      * @return the chosen one.
      */
-    Direction choose(Coordination current, List<Direction> availableDirections);
+    Direction choose(Coordinate current, List<Direction> availableDirections);
 }

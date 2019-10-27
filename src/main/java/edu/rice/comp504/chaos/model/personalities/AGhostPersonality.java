@@ -1,6 +1,6 @@
 package edu.rice.comp504.chaos.model.personalities;
 
-import edu.rice.comp504.chaos.model.Coordination;
+import edu.rice.comp504.chaos.model.Coordinate;
 import edu.rice.comp504.chaos.model.Direction;
 import edu.rice.comp504.chaos.model.entities.Ghost;
 import edu.rice.comp504.chaos.model.entities.Pacman;
@@ -13,7 +13,7 @@ public abstract class AGhostPersonality {
     private Pacman pm;
 
     /**
-     * Constructor. No matter what the concrete personality is, the ghost must know the coordination of the pacman.
+     * Constructor. No matter what the concrete personality is, the ghost must know the Coordinate of the pacman.
      * @param pm the reference of the pacman.
      */
     AGhostPersonality(Pacman pm) {
@@ -21,10 +21,10 @@ public abstract class AGhostPersonality {
     }
 
     /**
-     * Get the coordination of the pacman.
-     * @return the coordination.
+     * Get the Coordinate of the pacman.
+     * @return the Coordinate.
      */
-    Coordination getPacmanCoord() {
+    Coordinate getPacmanCoord() {
         return pm.getCoord();
     }
 
