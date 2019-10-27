@@ -165,7 +165,7 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
                     }
                 }
                 for (Ghost ghost : ghosts) {
-                    if (pacman.getLoc().distance(ghost.getLoc()) <= 10) {
+                    if (pacman.getLoc().distance(ghost.getLoc()) <= 25) {
                         if (ghost.getState() == 1 || ghost.getState() == 2) {
                             dying = true;
                             dyingTimeOut = Settings.dyingTime;

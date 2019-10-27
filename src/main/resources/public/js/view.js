@@ -24,6 +24,7 @@ var creditImg;
 var readyImg;
 var overImg;
 var dyingImg;
+var displayTarget;
 
 function logicToPhysical(lx,ly) {
     return {
@@ -396,6 +397,7 @@ function loadImages() {
 }
 
 window.onload = function() {
+    displayTarget = true;
     loadImages();
     document.addEventListener("keydown", function(e) {
         isKeyDown = true;
@@ -413,7 +415,9 @@ window.onload = function() {
         app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
         data.ghosts.forEach(function(element) {
             app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
-            app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+            if (displayTarget) {
+                app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+            }
         });
         app.drawText(data.pacman.credit, 20, 20);
     }, "json");
@@ -421,6 +425,7 @@ window.onload = function() {
     setUpdateFreq();
     $("#btn-pause").click(pause);
     $("#btn-resume").click(resume);
+    $("#btn-display").click(displayTargetOrNot);
     $("#btn-map").click(restart);
     $("#btn-restart").click(restart);
 };
@@ -433,7 +438,9 @@ function restart() {
         app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
         data.ghosts.forEach(function(element) {
             app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
-            app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+            if (displayTarget) {
+                app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+            }
         });
         app.drawText(data.pacman.credit, 20, 20);
     }, "json");
@@ -452,6 +459,10 @@ function pause() {
 
 function resume() {
     updateInterval = setInterval("updateGame()", 100);
+}
+
+function displayTargetOrNot() {
+    displayTarget = !displayTarget;
 }
 
 var energizerAppear = true;
@@ -515,7 +526,7 @@ function updateGame() {
                     } else {
                         app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
                     }
-                    if (element.state !== 3) {
+                    if (element.state !== 3 && displayTarget) {
                         app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
                     }
                 });
