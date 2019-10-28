@@ -96,19 +96,6 @@ public abstract class AEntity implements Cloneable, Serializable {
     }
 
     /**
-     * Set the direction.
-     * @param dir the direction.
-     */
-    public void setDir(Direction dir) {
-        this.dir = dir;
-    }
-
-    /**
-     * Move to intended destination or stop.
-     */
-    abstract public void move();
-
-    /**
      * Move on the regular spot. Regular spot is the center of each unit cell of the canvas.
      */
     void moveOnRegularSpot() {
@@ -145,7 +132,7 @@ public abstract class AEntity implements Cloneable, Serializable {
     /**
      * Move to a specific Coordinate.
      */
-    void moveToCoord (Coordinate destination) {
+    void moveToCoord(Coordinate destination) {
         this.loc = Utilities.coord2Loc(destination);
         this.coord = destination;
     }

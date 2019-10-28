@@ -73,6 +73,11 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
         pcs.addPropertyChangeListener("clock", timer);
     }
 
+    /**
+     * Reset a game to a certain level with a certain map.
+     * @param mapid the id of the map.
+     * @param level the level.
+     */
     public void reset(int mapid, int level) {
         this.level = level;
         this.timerPauseTimeOut = 0;

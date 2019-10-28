@@ -45,7 +45,8 @@ public class Bashful extends AGhostPersonality {
             case 4:
                 Coordinate resetTarget = new Coordinate(Settings.leftGateX, Settings.gateY);
                 return new TargetStrategy(context.getCoord(), resetTarget);
-            default:return null;
+            default:
+                return null;
         }
     }
 }

@@ -69,6 +69,6 @@ public class Coordinate implements Cloneable, Serializable {
      * @return if a physical address is in the ghost spawn area.
      */
     public boolean isGhostSpawnArea() {
-        return x >= Settings.spawnXMin && x <=Settings.spawnXMax && y >= Settings.spawnYMin && y <= Settings.spawnYMax;
+        return x >= Settings.spawnXMin && x <= Settings.spawnXMax && y >= Settings.spawnYMin && y <= Settings.spawnYMax;
     }
 }

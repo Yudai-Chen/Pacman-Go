@@ -10,7 +10,8 @@ import java.util.List;
  * A strategy which can make the ghost approach the target in a shortest way.
  */
 public class TargetStrategy implements IGhostStrategy {
-    private Coordinate current, target;
+    private Coordinate current;
+    private Coordinate target;
 
     /**
      * Constructor.
