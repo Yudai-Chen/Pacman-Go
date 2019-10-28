@@ -72,27 +72,27 @@ public class Utilities {
     }
 
     /**
-     * Convert the coordination in the map array (the logical address) to the location on the canvas (the physical address).
-     * @param coord the coordination in the map array (the logical address).
+     * Convert the Coordinate in the map array (the logical address) to the location on the canvas (the physical address).
+     * @param coord the Coordinate in the map array (the logical address).
      * @return the location on the canvas (the physical address).
      */
-    public static Coordination coord2Loc(Coordination coord) {
-        return new Coordination(coord.x * 20 + 10, coord.y * 20 + 10);
+    public static Coordinate coord2Loc(Coordinate coord) {
+        return new Coordinate(coord.x * 20 + 10, coord.y * 20 + 10);
     }
 
     /**
-     * Convert the location on the canvas (the physical address) to the coordination in the map array (the logical address).
+     * Convert the location on the canvas (the physical address) to the Coordinate in the map array (the logical address).
      * @param loc the location on the canvas (the physical address).
-     * @return the coordination in the map array (the logical address).
+     * @return the Coordinate in the map array (the logical address).
      */
-    public static Coordination loc2Coord (Coordination loc) {
-        return new Coordination((loc.x - 10) / 20, (loc.y - 10) / 20);
+    public static Coordinate loc2Coord (Coordinate loc) {
+        return new Coordinate((loc.x - 10) / 20, (loc.y - 10) / 20);
     }
 
 
     /**
      * Get the item(x, y) in the static maze. ATTENTION: In a 2-dimension array, we access the raw first and column next.
-     * However in the canvas, the column is the y-dimension and the raw is the x-dimension, so we should reverse the coordination
+     * However in the canvas, the column is the y-dimension and the raw is the x-dimension, so we should reverse the Coordinate
      * to access to the maze array.
      * @return the item.
      */
@@ -102,7 +102,7 @@ public class Utilities {
 
     /**
      * Get the item(x, y) in the static food map. ATTENTION: In a 2-dimension array, we access the raw first and column next.
-     * However in the canvas, the column is the y-dimension and the raw is the x-dimension, so we should reverse the coordination
+     * However in the canvas, the column is the y-dimension and the raw is the x-dimension, so we should reverse the Coordinate
      * to access to the maze array.
      * @return the item.
      */
@@ -111,9 +111,9 @@ public class Utilities {
     }
 
     /**
-     * Set the item on a certain coordination in the food map to a new item.
-     * @param x the x-coordination.
-     * @param y the y-coordination.
+     * Set the item on a certain Coordinate in the food map to a new item.
+     * @param x the x-Coordinate.
+     * @param y the y-Coordinate.
      * @param newItem the new item.
      */
     public static void setFoodMapItem(int x, int y, int newItem) {

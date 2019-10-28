@@ -1,7 +1,7 @@
 package edu.rice.comp504.chaos.model.entities;
 
 import edu.rice.comp504.chaos.Debug;
-import edu.rice.comp504.chaos.model.Coordination;
+import edu.rice.comp504.chaos.model.Coordinate;
 import edu.rice.comp504.chaos.model.Direction;
 import edu.rice.comp504.chaos.model.Settings;
 import edu.rice.comp504.chaos.model.Utilities;
@@ -24,21 +24,23 @@ public class Ghost extends AEntity implements PropertyChangeListener {
     private int lifetime;
     private boolean isLocked;
     private boolean isEscaped;
-    private Coordination home;
+    private Coordinate home;
     private int lockingTime;
     private AGhostPersonality personality;
     //0:ready, 1:scatter, 2:chase, 3:frighten, 4:eaten
     private int state;
     private int frightenTimeOut;
-    private Coordination _TARGET;
+    private Coordinate _TARGET;
+    private boolean eating;
+    private boolean returning;
     /**
      * Constructor.
      *
-     * @param startLoc the initial coordination of the entity.
+     * @param startLoc the initial Coordinate of the entity.
      * @param speed    the speed of the entity.
      * @param size     the size of the entity.
      */
-    public Ghost(String name, Coordination startLoc, int speed, int size, Direction dir, Coordination home, int lockingTime) {
+    public Ghost(String name, Coordinate startLoc, int speed, int size, Direction dir, Coordinate home, int lockingTime) {
         super(startLoc, speed, size, dir);
         this.name = name;
         this.isFrightened = false;
@@ -47,12 +49,29 @@ public class Ghost extends AEntity implements PropertyChangeListener {
         this.isEscaped = false;
         this.home = home;
         this._TARGET = Utilities.coord2Loc(home);
+        eating = false;
+        returning = false;
         state = 0;
         frightenTimeOut = 0;
         this.lockingTime = lockingTime;
         if (lockingTime == 0) {
             unLock();
         }
+    }
+
+    /**
+     * The ghost is being eaten.
+     */
+    public void eating() {
+        eating = true;
+    }
+
+    /**
+     * Test whether the ghost is being eaten.
+     * @return whether the ghost is being eaten.
+     */
+    public boolean isEating() {
+        return eating;
     }
 
     /**
@@ -69,7 +88,7 @@ public class Ghost extends AEntity implements PropertyChangeListener {
      * Get the home of the ghost. As known as the target in scatter mode.
      * @return the home of the ghost.
      */
-    public Coordination getHome() {
+    public Coordinate getHome() {
         return home;
     }
 
@@ -82,7 +101,7 @@ public class Ghost extends AEntity implements PropertyChangeListener {
     }
 
     /**
-     * Get all available directions from current coordination.
+     * Get all available directions from current Coordinate.
      * @return a list of all available directions.
      */
     private List<Direction> getAvailableDirections() {
@@ -99,6 +118,9 @@ public class Ghost extends AEntity implements PropertyChangeListener {
                     Direction test = new Direction(allDirections.get(i));
                     int item = Utilities.getMazeItem(getCoord().x + test.getDirX(), getCoord().y + test.getDirY());
                     if (item == 0 || item == 9) {
+                        result.add(test);
+                    }
+                    if (state == 4 && item == 2) {
                         result.add(test);
                     }
                 }
@@ -120,6 +142,14 @@ public class Ghost extends AEntity implements PropertyChangeListener {
     }
 
     /**
+     * Set the state of the ghost.
+     * @param s the new state.
+     */
+    public void setState(int s) {
+        this.state = s;
+    }
+
+    /**
      * Move to intended destination or stop.
      */
     public void move() {
@@ -135,21 +165,45 @@ public class Ghost extends AEntity implements PropertyChangeListener {
         if (!isLocked) {
             if (isEscaped) {
                 if (getLoc().isRegularSpot()) {
-                    if (getCoord().isCrossing()) {
-                        setDirection(personality.think(this).choose(getCoord(), getAvailableDirections()));
-                        if (Debug.ENABLE) {
-                            if (state == 1 || state == 2) {
-                                _TARGET = Utilities.coord2Loc(((TargetStrategy) personality.think(this)).getTarget());
+                    if (state == 4) {
+                        if (!getLoc().isGhostSpawnArea()) {
+                            if ((getDir().getDirName().equals("right") && getCoord().x == Settings.leftGateX && getCoord().y == Settings.gateY) ||
+                                    (getDir().getDirName().equals("left") && getCoord().x == Settings.leftGateX + 1 && getCoord().y == Settings.gateY)) {
+                                move(new Coordinate((Settings.spawnXMin + Settings.spawnXMax) / 2, Settings.spawnYMin - 10));
+                                setDirection(new Direction("down"));
+                                returning = true;
+                                move(getSpeed());
+                                return;
                             }
                         }
                     }
+                    if (getCoord().isCrossing()) {
+                        setDirection(personality.think(this).choose(getCoord(), getAvailableDirections()));
+                    }
                     moveOnRegularSpot();
                 } else {
+                    if (returning) {
+                        if (getCoord().y == 8) {
+                            state = 2;
+                            setSpeed(Settings.ghostSpeed);
+                            setDirection(new Direction("up"));
+                            returning = false;
+                            isEscaped = false;
+                        }
+                    }
                     move(computeIntendedDestination());
+                }
+                if (Debug.ENABLE) {
+                    if (state == 1 || state == 2) {
+                        _TARGET = Utilities.coord2Loc(((TargetStrategy) personality.think(this)).getTarget());
+                    }
                 }
             } else {
                 if ((getLoc().y - 10) % 20 == 0) {
-                    if (getLoc().x < (Settings.spawnXMin + Settings.spawnXMax) / 2) {
+                    if ((getLoc().x < (Settings.spawnXMin + Settings.spawnXMax) / 2 && getDir().getDirName().equals("left")) || (getLoc().x > (Settings.spawnXMin + Settings.spawnXMax) / 2 && getDir().getDirName().equals("right"))) {
+                        move(new Coordinate((Settings.spawnXMin + Settings.spawnXMax) / 2, getLoc().y));
+                        setDirection(new Direction("up"));
+                    } else if (getLoc().x < (Settings.spawnXMin + Settings.spawnXMax) / 2) {
                         setDirection(new Direction("right"));
                     } else if (getLoc().x > (Settings.spawnXMin + Settings.spawnXMax) / 2) {
                         setDirection(new Direction("left"));
@@ -178,17 +232,19 @@ public class Ghost extends AEntity implements PropertyChangeListener {
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("period")) {
-            if ((Integer)evt.getOldValue() != 0 && (Integer)evt.getOldValue() != 3) {
+        if (state != 4) {
+            if (evt.getPropertyName().equals("period")) {
+                if ((Integer) evt.getOldValue() != 0 && (Integer) evt.getOldValue() != 3) {
+                    setDirection(getDir().getReverse());
+                }
+                state = (Integer) evt.getNewValue();
+                setSpeed(Settings.ghostSpeed);
+            } else if (evt.getPropertyName().equals("frighten")) {
                 setDirection(getDir().getReverse());
+                state = 3;
+                frightenTimeOut = (int) evt.getNewValue();
+                setSpeed(Settings.ghostFrightenedSpeed);
             }
-            state = (Integer)evt.getNewValue();
-            setSpeed(Settings.ghostSpeed);
-        } else if (evt.getPropertyName().equals("frighten")) {
-            setDirection(getDir().getReverse());
-            state = 3;
-            frightenTimeOut = (int)evt.getNewValue();
-            setSpeed(Settings.ghostFrightenedSpeed);
         }
     }
 
@@ -196,6 +252,7 @@ public class Ghost extends AEntity implements PropertyChangeListener {
      * The ghost is eaten by the pacman.
      */
     public void eaten() {
+        eating = false;
         state = 4;
         setSpeed(Settings.ghostEatenSpeed);
     }

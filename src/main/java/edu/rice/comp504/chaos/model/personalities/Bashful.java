@@ -1,6 +1,7 @@
 package edu.rice.comp504.chaos.model.personalities;
 
-import edu.rice.comp504.chaos.model.Coordination;
+import edu.rice.comp504.chaos.model.Coordinate;
+import edu.rice.comp504.chaos.model.Settings;
 import edu.rice.comp504.chaos.model.entities.Ghost;
 import edu.rice.comp504.chaos.model.entities.Pacman;
 import edu.rice.comp504.chaos.model.strategies.IGhostStrategy;
@@ -16,7 +17,7 @@ import edu.rice.comp504.chaos.model.strategies.TargetStrategy;
 public class Bashful extends AGhostPersonality {
     private Ghost friend;
     /**
-     * Constructor. No matter what the concrete personality is, the ghost must know the coordination of the pacman.
+     * Constructor. No matter what the concrete personality is, the ghost must know the Coordinate of the pacman.
      *
      * @param pm the reference of the pacman.
      */
@@ -35,15 +36,14 @@ public class Bashful extends AGhostPersonality {
         switch (context.getState()) {
             case 1: return new TargetStrategy(context.getCoord(), context.getHome());
             case 2:
-                Coordination vStart = new Coordination(getPacmanCoord().x + getPacmanDirection().getDirX() * 2, getPacmanCoord().y + getPacmanDirection().getDirY() * 2);
-                Coordination vector =  new Coordination(vStart.x - friend.getCoord().x, vStart.y - friend.getCoord().y);
-                Coordination vEnd = new Coordination(friend.getCoord().x + vector.x * 2, friend.getCoord().y + vector.y * 2);
+                Coordinate vStart = new Coordinate(getPacmanCoord().x + getPacmanDirection().getDirX() * 2, getPacmanCoord().y + getPacmanDirection().getDirY() * 2);
+                Coordinate vector =  new Coordinate(vStart.x - friend.getCoord().x, vStart.y - friend.getCoord().y);
+                Coordinate vEnd = new Coordinate(friend.getCoord().x + vector.x * 2, friend.getCoord().y + vector.y * 2);
                 return new TargetStrategy(context.getCoord(), vEnd);
             case 3:
                 return new RandomStrategy();
             case 4:
-                //TODO
-                Coordination resetTarget = new Coordination(36, 5);
+                Coordinate resetTarget = new Coordinate(Settings.leftGateX, Settings.gateY);
                 return new TargetStrategy(context.getCoord(), resetTarget);
             default:return null;
         }
