@@ -30,7 +30,7 @@ public class Ghost extends AEntity implements PropertyChangeListener {
     //0:ready, 1:scatter, 2:chase, 3:frighten, 4:eaten
     private int state;
     private int frightenTimeOut;
-    private Coordinate _TARGET;
+    private Coordinate targetForDebug;
     private boolean eating;
     private boolean returning;
     /**
@@ -48,7 +48,7 @@ public class Ghost extends AEntity implements PropertyChangeListener {
         this.isLocked = true;
         this.isEscaped = false;
         this.home = home;
-        this._TARGET = Utilities.coord2Loc(home);
+        this.targetForDebug = Utilities.coord2Loc(home);
         eating = false;
         returning = false;
         state = 0;
@@ -195,7 +195,7 @@ public class Ghost extends AEntity implements PropertyChangeListener {
                 }
                 if (Debug.ENABLE) {
                     if (state == 1 || state == 2) {
-                        _TARGET = Utilities.coord2Loc(((TargetStrategy) personality.think(this)).getTarget());
+                        targetForDebug = Utilities.coord2Loc(((TargetStrategy) personality.think(this)).getTarget());
                     }
                 }
             } else {
@@ -271,6 +271,6 @@ public class Ghost extends AEntity implements PropertyChangeListener {
         if (lockingTime == 0) {
             unLock();
         }
-        this._TARGET = Utilities.coord2Loc(home);
+        this.targetForDebug = Utilities.coord2Loc(home);
     }
 }

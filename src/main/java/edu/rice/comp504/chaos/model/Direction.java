@@ -38,19 +38,25 @@ public class Direction {
      * Get the X-dimension intend.
      * @return the X-dimension intend.
      */
-    public int getDirX() {return dir.x;}
+    public int getDirX() {
+        return dir.x;
+    }
 
     /**
      * Get the Y-dimension intend.
      * @return the Y-dimension intend.
      */
-    public int getDirY() {return dir.y;}
+    public int getDirY() {
+        return dir.y;
+    }
 
     /**
      * Get the name of the direction.
      * @return the name of the direction.
      */
-    public String getDirName() {return directionName;}
+    public String getDirName() {
+        return directionName;
+    }
 
     /**
      * Get the reverse of the direction.

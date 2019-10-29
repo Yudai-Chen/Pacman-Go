@@ -1,9 +1,6 @@
 package edu.rice.comp504.chaos.model;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,12 +36,7 @@ public class Utilities {
      * @throws IOException map file not found.
      */
     private static int[][] loadMap(String mapFileLocation) throws IOException {
-        File file = new File(mapFileLocation);
-        if (!file.exists()) {
-            throw new RuntimeException("Map file not found.");
-        }
-
-        BufferedReader br = new BufferedReader(new FileReader(file));
+        BufferedReader br = new BufferedReader(new InputStreamReader(Game.class.getResourceAsStream(mapFileLocation)));
         String str;
         List<int[]> list = new ArrayList<>();
         while ((str = br.readLine()) != null) {
@@ -61,8 +53,9 @@ public class Utilities {
         }
         int max = 0;
         for (int[] ints : list) {
-            if (max < ints.length)
+            if (max < ints.length) {
                 max = ints.length;
+            }
         }
         int[][] array = new int[list.size()][max];
         for (int i = 0; i < array.length; i++) {
@@ -85,7 +78,7 @@ public class Utilities {
      * @param loc the location on the canvas (the physical address).
      * @return the Coordinate in the map array (the logical address).
      */
-    public static Coordinate loc2Coord (Coordinate loc) {
+    public static Coordinate loc2Coord(Coordinate loc) {
         return new Coordinate((loc.x - 10) / 20, (loc.y - 10) / 20);
     }
 

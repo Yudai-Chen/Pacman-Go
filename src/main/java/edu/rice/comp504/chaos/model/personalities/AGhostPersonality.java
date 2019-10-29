@@ -41,5 +41,5 @@ public abstract class AGhostPersonality {
      * @param context the ghost.
      * @return the strategy.
      */
-    abstract public IGhostStrategy think(Ghost context);
+    public abstract IGhostStrategy think(Ghost context);
 }

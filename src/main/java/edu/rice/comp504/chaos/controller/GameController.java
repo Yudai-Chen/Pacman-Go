@@ -2,19 +2,19 @@ package edu.rice.comp504.chaos.controller;
 
 import com.google.gson.Gson;
 import edu.rice.comp504.chaos.model.Game;
-import spark.servlet.SparkApplication;
 
 import static spark.Spark.*;
 
 /**
  * The controller. Deal with http requests.
  */
-public class GameController implements SparkApplication {
+public class GameController {
     /**
      * Entry point to local server.
      */
-    @Override
-    public void init() {
+    public static void main(String[] args) {
+        port(getHerokuAssignedPort());
+
         staticFiles.location("/public");
         Gson gson = new Gson();
         Game game = new Game();
@@ -30,6 +30,18 @@ public class GameController implements SparkApplication {
             game.pacmanMove(request.body());
             return 200;
         }));
+    }
+
+    /**
+     * Get the assigned port when deployed onto Heroku.
+     * @return the assigned port.
+     */
+    private static int getHerokuAssignedPort() {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get("PORT") != null) {
+            return Integer.parseInt(processBuilder.environment().get("PORT"));
+        }
+        return 4567;
     }
 }
 

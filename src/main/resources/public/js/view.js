@@ -397,7 +397,7 @@ function loadImages() {
 }
 
 window.onload = function() {
-    displayTarget = true;
+    displayTarget = false;
     loadImages();
     document.addEventListener("keydown", function(e) {
         isKeyDown = true;
@@ -409,14 +409,14 @@ window.onload = function() {
     app = createApp(document.querySelector("canvas"));
     app.drawBackground();
     app.drawText("Powered by Team Chaos.", 500, 20);
-    $.post("/PacManGo/load", $("#map option:selected").val(), function (data) {
+    $.post("/load", $("#map option:selected").val(), function (data) {
         app.drawMaze(data.maze, data.mapid);
         app.drawFoodMap(data.foodMap);
         app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
         data.ghosts.forEach(function(element) {
             app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
             if (displayTarget) {
-                app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+                app.drawTarget(element.targetForDebug.x, element.targetForDebug.y, element.name);
             }
         });
         app.drawText(data.pacman.credit, 20, 20);
@@ -432,14 +432,14 @@ window.onload = function() {
 
 
 function restart() {
-    $.post("/PacManGo/load", $("#map option:selected").val(), function (data) {
+    $.post("/load", $("#map option:selected").val(), function (data) {
         app.drawMaze(data.maze, data.mapid);
         app.drawFoodMap(data.foodMap);
         app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
         data.ghosts.forEach(function(element) {
             app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
             if (displayTarget) {
-                app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+                app.drawTarget(element.targetForDebug.x, element.targetForDebug.y, element.name);
             }
         });
         app.drawText(data.pacman.credit, 20, 20);
@@ -482,11 +482,11 @@ function updateGame() {
         } else {
             return;
         }
-        $.post("/PacManGo/pacman-move", move, function (data) {
+        $.post("/pacman-move", move, function (data) {
 
         })
     }
-    $.get("/PacManGo/update", function(data) {
+    $.get("/update", function(data) {
         app.clear();
         app.drawBackground();
         app.drawText("Powered by Team Chaos.", 500, 20);
@@ -527,7 +527,7 @@ function updateGame() {
                         app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
                     }
                     if (element.state !== 3 && displayTarget) {
-                        app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+                        app.drawTarget(element.targetForDebug.x, element.targetForDebug.y, element.name);
                     }
                 });
             }
