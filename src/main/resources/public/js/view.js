@@ -416,7 +416,7 @@ window.onload = function() {
         data.ghosts.forEach(function(element) {
             app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
             if (displayTarget) {
-                app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+                app.drawTarget(element.targetForDebug.x, element.targetForDebug.y, element.name);
             }
         });
         app.drawText(data.pacman.credit, 20, 20);
@@ -439,7 +439,7 @@ function restart() {
         data.ghosts.forEach(function(element) {
             app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
             if (displayTarget) {
-                app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+                app.drawTarget(element.targetForDebug.x, element.targetForDebug.y, element.name);
             }
         });
         app.drawText(data.pacman.credit, 20, 20);
@@ -527,7 +527,7 @@ function updateGame() {
                         app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
                     }
                     if (element.state !== 3 && displayTarget) {
-                        app.drawTarget(element._TARGET.x, element._TARGET.y, element.name);
+                        app.drawTarget(element.targetForDebug.x, element.targetForDebug.y, element.name);
                     }
                 });
             }
