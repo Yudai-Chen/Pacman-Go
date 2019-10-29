@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>edu.rice.comp504.chaos.model</OriginalElement>
+  <nodes>
+    <node x="1073.0" y="0.0">edu.rice.comp504.chaos.model.Game</node>
+    <node x="259.0" y="590.0">edu.rice.comp504.chaos.model.entities.Pacman</node>
+    <node x="179.5" y="1557.0">edu.rice.comp504.chaos.model.strategies.IGhostStrategy</node>
+    <node x="0.0" y="1413.0">edu.rice.comp504.chaos.model.personalities.Bashful</node>
+    <node x="743.0" y="1557.0">edu.rice.comp504.chaos.model.Direction</node>
+    <node x="0.0" y="1694.5">edu.rice.comp504.chaos.model.strategies.RandomStrategy</node>
+    <node x="359.0" y="1660.0">edu.rice.comp504.chaos.model.strategies.TargetStrategy</node>
+    <node x="1436.0" y="0.0">edu.rice.comp504.chaos.model.Utilities</node>
+    <node x="0.0" y="0.0">edu.rice.comp504.chaos.model.Settings</node>
+    <node x="985.0" y="1220.0">edu.rice.comp504.chaos.model.Coordinate</node>
+    <node x="720.0" y="1424.5">edu.rice.comp504.chaos.model.personalities.Ambusher</node>
+    <node x="240.0" y="1424.5">edu.rice.comp504.chaos.model.personalities.Pokey</node>
+    <node x="480.0" y="1424.5">edu.rice.comp504.chaos.model.personalities.Chaser</node>
+    <node x="601.0" y="480.0">edu.rice.comp504.chaos.model.entities.Ghost</node>
+    <node x="349.0" y="1220.0">edu.rice.comp504.chaos.model.personalities.AGhostPersonality</node>
+    <node x="462.25" y="0.0">edu.rice.comp504.chaos.model.entities.AEntity</node>
+    <node x="941.0" y="1557.0">edu.rice.comp504.chaos.model.Timer</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="edu.rice.comp504.chaos.model.personalities.Pokey" target="edu.rice.comp504.chaos.model.personalities.AGhostPersonality">
+      <point x="0.0" y="-38.0" />
+      <point x="350.0" y="1393.0" />
+      <point x="439.75" y="1393.0" />
+      <point x="-30.25" y="71.5" />
+    </edge>
+    <edge source="edu.rice.comp504.chaos.model.strategies.TargetStrategy" target="edu.rice.comp504.chaos.model.strategies.IGhostStrategy">
+      <point x="0.0" y="-61.0" />
+      <point x="528.5" y="1635.0" />
+      <point x="433.75" y="1635.0" />
+      <point x="84.75" y="26.5" />
+    </edge>
+    <edge source="edu.rice.comp504.chaos.model.entities.Pacman" target="edu.rice.comp504.chaos.model.entities.AEntity">
+      <point x="0.0" y="-138.0" />
+      <point x="420.0" y="455.0" />
+      <point x="539.75" y="455.0" />
+      <point x="-77.5" y="215.0" />
+    </edge>
+    <edge source="edu.rice.comp504.chaos.model.personalities.Chaser" target="edu.rice.comp504.chaos.model.personalities.AGhostPersonality">
+      <point x="0.0" y="-38.0" />
+      <point x="590.0" y="1393.0" />
+      <point x="500.25" y="1393.0" />
+      <point x="30.25" y="71.5" />
+    </edge>
+    <edge source="edu.rice.comp504.chaos.model.personalities.Ambusher" target="edu.rice.comp504.chaos.model.personalities.AGhostPersonality">
+      <point x="0.0" y="-38.0" />
+      <point x="830.0" y="1383.0" />
+      <point x="560.75" y="1383.0" />
+      <point x="90.75" y="71.5" />
+    </edge>
+    <edge source="edu.rice.comp504.chaos.model.entities.Ghost" target="edu.rice.comp504.chaos.model.entities.AEntity">
+      <point x="0.0" y="-248.0" />
+      <point x="814.5" y="455.0" />
+      <point x="694.75" y="455.0" />
+      <point x="77.5" y="215.0" />
+    </edge>
+    <edge source="edu.rice.comp504.chaos.model.personalities.Bashful" target="edu.rice.comp504.chaos.model.personalities.AGhostPersonality">
+      <point x="0.0" y="-49.5" />
+      <point x="110.0" y="1383.0" />
+      <point x="379.25" y="1383.0" />
+      <point x="-90.75" y="71.5" />
+    </edge>
+    <edge source="edu.rice.comp504.chaos.model.strategies.RandomStrategy" target="edu.rice.comp504.chaos.model.strategies.IGhostStrategy">
+      <point x="0.0" y="-26.5" />
+      <point x="169.5" y="1635.0" />
+      <point x="264.25" y="1635.0" />
+      <point x="-84.75" y="26.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.4428033142914575" x="668.5776072260419" y="551.393126486041" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
