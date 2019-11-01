@@ -72,6 +72,14 @@ public abstract class AEntity implements Cloneable, Serializable {
     }
 
     /**
+     * Get the start direction.
+     * @return the start direction.
+     */
+    Direction getStartDir() {
+        return startDir;
+    }
+
+    /**
      * Get the direction.
      * @return the direction.
      */

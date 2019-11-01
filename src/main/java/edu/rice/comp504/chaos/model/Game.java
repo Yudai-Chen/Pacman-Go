@@ -13,13 +13,15 @@ import java.io.IOException;
  * The pac-man game.
  */
 public class Game implements java.io.Serializable, PropertyChangeListener{
+    private boolean isTwoPlayer;
     private int[][] maze;
     private int[][] foodMap;
     private int mapid;
     private Timer timer;
-    //0:ready, 1:scatter, 2:chase
+    //0:ready, 1:scatter, 2:chase, 3:frightened
     private int period;
     private Pacman pacman;
+    private Pacman pacman2;
     private static PropertyChangeSupport pcs;
     private Ghost[] ghosts;
     private boolean timerPause = false;
@@ -42,9 +44,10 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
         this.mapid = 1;
         loadMap(mapid);
         this.totalDots = remainingDots;
+        this.isTwoPlayer = false;
 
         pcs = new PropertyChangeSupport(this);
-        pacman = new Pacman(this, new Coordinate(Settings.pacmanStartLocX, Settings.pacmanStartLocY), Settings.pacmanSpeed, Settings.pacmanSize);
+        pacman = new Pacman(this, new Coordinate(Settings.pacmanStartLocX, Settings.pacmanStartLocY), Settings.pacmanSpeed, Settings.pacmanSize, new Direction(Settings.pacmanStartDir));
         ghosts = new Ghost[4];
         ghosts[0] = new Ghost("red", new Coordinate(Settings.redStartLocX, Settings.redStartLocY), Settings.ghostSpeed, Settings.ghostSize, new Direction(Settings.redGhostStartDir), new Coordinate(Settings.redHomeCoordX, Settings.redHomeCoordY), Settings.redLockingTime);
         AGhostPersonality chase = new Chaser(pacman);
@@ -63,6 +66,7 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
         ghosts[3].setPersonality(pokey);
 
         pacman.addListeners(ghosts);
+
         for (Ghost ghost : ghosts) {
             pcs.addPropertyChangeListener("period", ghost);
         }
@@ -78,7 +82,7 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
      * @param mapid the id of the map.
      * @param level the level.
      */
-    public void reset(int mapid, int level) {
+    public void reset(int mapid, int level, boolean isTwoPlayer) {
         this.level = level;
         this.timerPauseTimeOut = 0;
         this.gamePause = false;
@@ -91,9 +95,13 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
         this.mapid = mapid;
         loadMap(mapid);
         this.totalDots = remainingDots;
+        this.isTwoPlayer = isTwoPlayer;
 
         pcs = new PropertyChangeSupport(this);
-        pacman = new Pacman(this, new Coordinate(Settings.pacmanStartLocX, Settings.pacmanStartLocY), Settings.pacmanSpeed, Settings.pacmanSize);
+        pacman = new Pacman(this, new Coordinate(Settings.pacmanStartLocX, Settings.pacmanStartLocY), Settings.pacmanSpeed, Settings.pacmanSize, new Direction(Settings.pacmanStartDir));
+        if (isTwoPlayer) {
+            pacman2 = new Pacman(this, new Coordinate(Settings.pacman2StartLocX, Settings.pacman2StartLocY), Settings.pacmanSpeed, Settings.pacmanSize, new Direction(Settings.pacman2StartDir));
+        }
         ghosts = new Ghost[4];
         ghosts[0] = new Ghost("red", new Coordinate(Settings.redStartLocX, Settings.redStartLocY), Settings.ghostSpeed, Settings.ghostSize, new Direction(Settings.redGhostStartDir), new Coordinate(Settings.redHomeCoordX, Settings.redHomeCoordY), Settings.redLockingTime);
         AGhostPersonality chase = new Chaser(pacman);
@@ -112,6 +120,9 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
         ghosts[3].setPersonality(pokey);
 
         pacman.addListeners(ghosts);
+        if (isTwoPlayer) {
+            pacman2.addListeners(ghosts);
+        }
         for (Ghost ghost : ghosts) {
             pcs.addPropertyChangeListener("period", ghost);
         }
@@ -158,6 +169,9 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
                 } else {
                     currentGhostCredit = 100;
                     pacman.setSpeed(Settings.pacmanSpeed);
+                    if (isTwoPlayer) {
+                        pacman2.setSpeed(Settings.pacmanSpeed);
+                    }
                     int oldPeriod = period;
                     pcs.firePropertyChange("clock", true, timerPause);
                     period = timer.getPeriod();
@@ -165,6 +179,9 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
                 }
                 if (period != 0) {
                     pacman.move();
+                    if (isTwoPlayer) {
+                        pacman2.move();
+                    }
                     for (Ghost ghost : ghosts) {
                         ghost.move();
                     }
@@ -184,9 +201,29 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
                         }
                     }
                 }
+                if (isTwoPlayer) {
+                    for (Ghost ghost : ghosts) {
+                        if (pacman2.getLoc().distance(ghost.getLoc()) <= 25) {
+                            if (ghost.getState() == 1 || ghost.getState() == 2) {
+                                dying = true;
+                                dyingTimeOut = Settings.dyingTime;
+                                return;
+                            } else if (ghost.getState() == 3) {
+                                ghost.eating();
+                                gamePause = true;
+                                gamePauseTimeOut = Settings.eatPauseTime;
+                                currentGhostCredit *= 2;
+                                pacman2.addCredit(currentGhostCredit);
+                            }
+                        }
+                    }
+                }
                 remainingDots = totalDots - pacman.getEatenDots();
+                if (isTwoPlayer) {
+                    remainingDots -= pacman2.getEatenDots();
+                }
                 if (remainingDots == 0) {
-                    reset(mapid, level + 1);
+                    reset(mapid, level + 1, isTwoPlayer);
                 }
             } else {
                 if (gamePauseTimeOut == 0) {
@@ -204,6 +241,9 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
                 life--;
                 dying = false;
                 pacman.resetLoc();
+                if (isTwoPlayer) {
+                    pacman2.resetLoc();
+                }
                 timer.reset();
                 for (Ghost resetGhost : ghosts) {
                     resetGhost.resetLoc();
@@ -219,8 +259,15 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
      * @return whether it is a valid move.
      */
     public boolean pacmanMove(String request) {
-        Direction moveDir = new Direction(request);
-        pacman.setPlayerAction(moveDir);
+        if (request.charAt(request.length() - 1) != '2') {
+            Direction moveDir = new Direction(request);
+            pacman.setPlayerAction(moveDir);
+        } else {
+            if (isTwoPlayer) {
+                Direction moveDir = new Direction(request.substring(0, request.length() - 1));
+                pacman2.setPlayerAction(moveDir);
+            }
+        }
         return true;
     }
 

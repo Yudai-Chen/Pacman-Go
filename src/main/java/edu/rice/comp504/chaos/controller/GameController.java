@@ -19,7 +19,7 @@ public class GameController {
         Gson gson = new Gson();
         Game game = new Game();
         post("/load", (request, response) -> {
-            game.reset(Integer.parseInt(request.body()), 1);
+            game.reset(Integer.parseInt(request.body()), 1, true);
             return gson.toJson(game);
         });
         get("/update", (request, response) -> {
