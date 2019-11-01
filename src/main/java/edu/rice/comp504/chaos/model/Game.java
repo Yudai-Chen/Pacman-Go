@@ -78,6 +78,14 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
     }
 
     /**
+     * Test whether the game is in two-player mode.
+     * @return whether the game is in two-player mode.
+     */
+    public boolean isTwoPlayer() {
+        return isTwoPlayer;
+    }
+
+    /**
      * Reset a game to a certain level with a certain map.
      * @param mapid the id of the map.
      * @param level the level.

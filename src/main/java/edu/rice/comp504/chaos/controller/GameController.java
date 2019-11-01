@@ -19,7 +19,7 @@ public class GameController {
         Gson gson = new Gson();
         Game game = new Game();
         post("/load", (request, response) -> {
-            game.reset(Integer.parseInt(request.body()), 1, true);
+            game.reset(Integer.parseInt(request.body()), 1, false);
             return gson.toJson(game);
         });
         get("/update", (request, response) -> {
@@ -30,6 +30,12 @@ public class GameController {
             game.pacmanMove(request.body());
             return 200;
         }));
+        post("/add-player", (request, response) -> {
+            if (!game.isTwoPlayer()) {
+                game.reset(Integer.parseInt(request.body()), 1, true);
+            }
+            return 200;
+        });
     }
 
     /**

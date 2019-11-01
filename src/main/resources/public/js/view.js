@@ -461,6 +461,7 @@ window.onload = function() {
     $("#btn-pause").click(pause);
     $("#btn-resume").click(resume);
     $("#btn-display").click(displayTargetOrNot);
+    $("#btn-player").click(addPlayer);
     $("#btn-map").click(restart);
     $("#btn-restart").click(restart);
 };
@@ -505,7 +506,9 @@ function resume() {
 }
 
 function addPlayer() {
+    $.post("/add-player", $("#map option:selected").val(), function(data) {
 
+    });
 }
 
 function displayTargetOrNot() {
