@@ -252,9 +252,9 @@ function createApp(canvas) {
     var drawPlayerName = function (playerName) {
         context.save();
         if (playerName === 1) {
-            context.drawImage(playerNameImg[0], 40, 20, 20, 10);
+            context.drawImage(playerNameImg[0], 20, 5, 40, 20);
         } else if (playerName === 2) {
-            context.drawImage(playerNameImg[1], 120, 20, 20, 10);
+            context.drawImage(playerNameImg[1], 150, 5, 40, 20);
         }
         context.restore();
     };
@@ -418,9 +418,9 @@ function loadImages() {
     frightenWhiteGhostImg.src = ghostImgSrcPrefix + "frighten_white.png";
     playerNameImg = [];
     playerNameImg[0] = new Image();
-    playerNameImg.src = otherImgSrcPrefix + "1UP.png";
+    playerNameImg[0].src = otherImgSrcPrefix + "1UP.png";
     playerNameImg[1] = new Image();
-    playerNameImg.src = otherImgSrcPrefix + "2UP.png";
+    playerNameImg[1].src = otherImgSrcPrefix + "2UP.png";
 }
 
 window.onload = function() {
@@ -449,10 +449,10 @@ window.onload = function() {
                 app.drawTarget(element.targetForDebug.x, element.targetForDebug.y, element.name);
             }
         });
-        app.drawText(data.pacman.credit, 20, 20);
+        app.drawText(data.pacman.credit, 70, 20);
         app.drawPlayerName(1);
         if (data.isTwoPlayer) {
-            app.drawText(data.pacman2.credit, 100, 20);
+            app.drawText(data.pacman2.credit, 200, 20);
             app.drawPlayerName(2);
         }
     }, "json");
@@ -481,10 +481,10 @@ function restart() {
                 app.drawTarget(element.targetForDebug.x, element.targetForDebug.y, element.name);
             }
         });
-        app.drawText(data.pacman.credit, 20, 20);
+        app.drawText(data.pacman.credit, 70, 20);
         app.drawPlayerName(1);
         if (data.isTwoPlayer) {
-            app.drawText(data.pacman2.credit, 100, 20);
+            app.drawText(data.pacman2.credit, 200, 20);
             app.drawPlayerName(2);
         }
     }, "json");
@@ -550,10 +550,10 @@ function updateGame() {
         app.drawText("Powered by Team Chaos.", 500, 20);
         app.drawMaze(data.maze, data.mapid);
         app.drawFoodMap(data.foodMap);
-        app.drawText(data.pacman.credit, 20, 20);
+        app.drawText(data.pacman.credit, 70, 20);
         app.drawPlayerName(1);
         if (data.isTwoPlayer) {
-            app.drawText(data.pacman2.credit, 100, 20);
+            app.drawText(data.pacman2.credit, 200, 20);
             app.drawPlayerName(2);
         }
         if (data.life > 0) {
