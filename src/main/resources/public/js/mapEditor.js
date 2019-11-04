@@ -130,7 +130,20 @@ function createMapEditor(canvas) {
                 isMouseDown = false;
             }
         } else if (tool >= 1 && tool <= 5) {
+            var x = event.pageX;
+            var y = event.pageY;
+            var loc = getPointOnCanvas(event.target, x, y);
+            var currentLoc = physicalToLogical(loc.x, loc.y);
             if (isMouseDown) {
+                if ((currentLoc.x === (startLoc.x - 10) / 20 && currentLoc.y === (startLoc.y - 10) / 20)) {
+                    currentMap[currentLoc.y][currentLoc.x] = tool;
+                    context.restore();
+                    isMouseDown = false;
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+                    drawBackGround();
+                    drawMaze(currentMap, 0);
+                    return;
+                }
                 doMouseMove(event);
                 context.restore();
                 isMouseDown = false;
