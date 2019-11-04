@@ -6,7 +6,7 @@ import java.util.Objects;
  * Application global settings. All static basic types variables.
  */
 public class Settings {
-    static String mapFileLocation = "/public/map";
+    public static String mapFileLocation = "/public/map";
     //static String mapFileLocation = Objects.requireNonNull(Game.class.getClassLoader().getResource("../..")).getPath();
     public static int spawnXMin = 660;
     public static int spawnXMax = 820;

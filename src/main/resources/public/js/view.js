@@ -29,6 +29,7 @@ var overImg;
 var dyingImg;
 var displayTarget;
 var playerNameImg;
+var iconImg;
 
 function logicToPhysical(lx,ly) {
     return {
@@ -137,6 +138,8 @@ function createApp(canvas) {
                         context.arc(980, 160, 10, .5 * Math.PI, 1.5 * Math.PI, false);
                         context.stroke();
                         context.closePath();
+                    } else if (id === 2) {
+                        drawPacManIcon();
                     }
                 }
             }
@@ -316,8 +319,12 @@ function createApp(canvas) {
         }
         context.stroke();
         context.restore();
+    };
 
-
+    var drawPacManIcon = function() {
+        context.save();
+        context.drawImage(iconImg, 228, 148, 84, 24);
+        context.restore();
     };
 
     var drawText = function(text, x, y) {
@@ -345,10 +352,12 @@ function createApp(canvas) {
         drawPlayerName: drawPlayerName,
         drawTarget: drawTarget,
         drawText: drawText,
+        drawPacManIcon: drawPacManIcon,
         clear: clear,
         dims: {height: canvas.height, width: canvas.width}
     }
 }
+
 
 function loadImages() {
     pacmanImg = [];
@@ -421,6 +430,8 @@ function loadImages() {
     playerNameImg[0].src = otherImgSrcPrefix + "1UP.png";
     playerNameImg[1] = new Image();
     playerNameImg[1].src = otherImgSrcPrefix + "2UP.png";
+    iconImg = new Image();
+    iconImg.src = otherImgSrcPrefix + "icon.png";
 }
 
 window.onload = function() {
@@ -435,6 +446,7 @@ window.onload = function() {
     });
     app = createApp(document.querySelector("canvas"));
     app.drawBackground();
+
     app.drawText("Powered by Team Chaos.", 500, 20);
     $.post("/load", $("#map option:selected").val(), function (data) {
         app.drawMaze(data.maze, data.mapid);
@@ -462,6 +474,7 @@ window.onload = function() {
     $("#btn-resume").click(resume);
     $("#btn-display").click(displayTargetOrNot);
     $("#btn-player").click(addPlayer);
+    $("#btn-editor").click(mapEditor);
     $("#btn-map").click(restart);
     $("#btn-restart").click(restart);
 };
@@ -488,6 +501,10 @@ function restart() {
             app.drawPlayerName(2);
         }
     }, "json");
+}
+
+function mapEditor() {
+    window.location.href="mapEditor.html";
 }
 
 /**

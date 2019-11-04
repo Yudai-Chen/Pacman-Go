@@ -164,6 +164,14 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
     }
 
     /**
+     * Add a new map.
+     * @param request the map.
+     */
+    public void addMap(String request) {
+
+    }
+
+    /**
      * Update the positions of all entities in the game.
      */
     public void update() {

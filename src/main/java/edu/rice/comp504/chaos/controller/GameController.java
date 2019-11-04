@@ -2,6 +2,8 @@ package edu.rice.comp504.chaos.controller;
 
 import com.google.gson.Gson;
 import edu.rice.comp504.chaos.model.Game;
+import edu.rice.comp504.chaos.model.Settings;
+import edu.rice.comp504.chaos.model.Utilities;
 
 import static spark.Spark.*;
 
@@ -18,6 +20,14 @@ public class GameController {
         staticFiles.location("/public");
         Gson gson = new Gson();
         Game game = new Game();
+        post("/mapEditor/load", (request, response) -> {
+            Utilities.loadStaticMaze(Settings.mapFileLocation + "/map" + request.body() + ".txt");
+            return gson.toJson(Utilities.getsMaze());
+        });
+        post("/mapEditor/submit", (request, response) -> {
+            game.addMap(request.body());
+            return gson.toJson(Utilities.getsMaze());
+        });
         post("/load", (request, response) -> {
             game.reset(Integer.parseInt(request.body()), 1, false);
             return gson.toJson(game);
