@@ -51,10 +51,10 @@ public class GameTest extends TestCase {
             g.update();
             g.pacmanMove("right2");
         }
-        assertEquals("Pacman gained certain credits after eating some small dots, an energizer and a ghost: ",
+        assertEquals("Pacman gained certain credits after eating some small dots, an energizer, a fruit and a ghost: ",
                 540, g.getPacman(1).getCredit());
-        assertEquals("Pacman 2 gained certain credits after eating some small dots and an energizer: ",
-                220, g.getPacman(2).getCredit());
+        assertEquals("Pacman 2 gained certain credits after eating some small dots, a fruit and an energizer: ",
+                320, g.getPacman(2).getCredit());
 
 
         Settings.redStartLocX = 740;

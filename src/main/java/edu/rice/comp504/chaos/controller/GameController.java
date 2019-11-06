@@ -17,9 +17,6 @@ public class GameController {
     public static void main(String[] args) {
         port(getHerokuAssignedPort());
 
-        int maxThreads = 8;
-        threadPool(maxThreads);
-
         staticFiles.location("/public");
         Gson gson = new Gson();
         Game game = new Game();

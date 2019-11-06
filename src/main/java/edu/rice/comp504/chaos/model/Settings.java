@@ -34,33 +34,33 @@ public class Settings {
     static String pacmanStartDir = "left";
     static String pacman2StartDir = "right";
 
-    public static int redStartLocX = 740;
-    public static int redStartLocY = 110;
-    public static int redHomeCoordX = 52;
-    public static int redHomeCoordY = 0;
-    public static String redGhostStartDir = "left";
-    public static int redLockingTime = 0;
+    static int redStartLocX = 740;
+    static int redStartLocY = 110;
+    static int redHomeCoordX = 52;
+    static int redHomeCoordY = 0;
+    static String redGhostStartDir = "left";
+    static int redLockingTime = 0;
 
-    public static int pinkStartLocX = 740;
-    public static int pinkStartLocY = 170;
-    public static int pinkHomeCoordX = 0;
-    public static int pinkHomeCoordY = 0;
-    public static String pinkGhostStartDir = "down";
-    public static int pinkLockingTime = 8;
+    static int pinkStartLocX = 740;
+    static int pinkStartLocY = 170;
+    static int pinkHomeCoordX = 0;
+    static int pinkHomeCoordY = 0;
+    static String pinkGhostStartDir = "down";
+    static int pinkLockingTime = 8;
 
-    public static int blueStartLocX = 700;
-    public static int blueStartLocY = 170;
-    public static int blueHomeCoordX = 52;
-    public static int blueHomeCoordY = 19;
-    public static String blueGhostStartDir = "up";
-    public static int blueLockingTime = 43;
+    static int blueStartLocX = 700;
+    static int blueStartLocY = 170;
+    static int blueHomeCoordX = 52;
+    static int blueHomeCoordY = 19;
+    static String blueGhostStartDir = "up";
+    static int blueLockingTime = 43;
 
-    public static int yellowStartLocX = 780;
-    public static int yellowStartLocY = 170;
-    public static int yellowHomeCoordX = 0;
-    public static int yellowHomeCoordY = 19;
-    public static String yellowGhostStartDir = "up";
-    public static int yellowLockingTime = 85;
+    static int yellowStartLocX = 780;
+    static int yellowStartLocY = 170;
+    static int yellowHomeCoordX = 0;
+    static int yellowHomeCoordY = 19;
+    static String yellowGhostStartDir = "up";
+    static int yellowLockingTime = 85;
 
     public static int ghostSpeed = 5;
     public static int ghostFrightenedSpeed = 3;
@@ -70,4 +70,7 @@ public class Settings {
 
     static int eatPauseTime = 10;
     static int dyingTime = 11;
+    static int fruitAppearTime = 200;
+    static int fruitCoordX = 36;
+    static int fruitCoordY = 11;
 }

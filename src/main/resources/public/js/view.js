@@ -30,6 +30,8 @@ var dyingImg;
 var displayTarget;
 var playerNameImg;
 var iconImg;
+var fruitImg;
+var currentFruitType;
 
 function logicToPhysical(lx,ly) {
     return {
@@ -166,6 +168,8 @@ function createApp(canvas) {
                         context.fill();
                         context.closePath();
                     }
+                } else if (value === 3) {
+                    drawFruit(currentFruitType, pos.x, pos.y - 15, 30, 30);
                 }
             }
         }
@@ -335,6 +339,12 @@ function createApp(canvas) {
         context.restore();
     };
 
+    var drawFruit = function(fruitId, x, y, width, height) {
+        context.save();
+        context.drawImage(fruitImg[fruitId], x, y, width, height);
+        context.restore();
+    };
+
     var clear = function() {
         context.clearRect(0,0, canvas.width, canvas.height);
     };
@@ -353,6 +363,7 @@ function createApp(canvas) {
         drawTarget: drawTarget,
         drawText: drawText,
         drawPacManIcon: drawPacManIcon,
+        drawFruit: drawFruit,
         clear: clear,
         dims: {height: canvas.height, width: canvas.width}
     }
@@ -432,6 +443,13 @@ function loadImages() {
     playerNameImg[1].src = otherImgSrcPrefix + "2UP.png";
     iconImg = new Image();
     iconImg.src = otherImgSrcPrefix + "icon.png";
+    fruitImg = [];
+
+    for (var fi = 0; fi < 4; fi++) {
+        var id = fi + 1;
+        fruitImg[fi] = new Image();
+        fruitImg[fi].src = otherImgSrcPrefix + "fruit" + id + ".png";
+    }
 }
 
 window.onload = function() {
@@ -449,6 +467,7 @@ window.onload = function() {
 
     app.drawText("Powered by Team Chaos.", 500, 20);
     $.post("/load", $("#map option:selected").val(), function (data) {
+        currentFruitType = (data.level - 1) % 4;
         app.drawMaze(data.maze, data.mapid);
         app.drawFoodMap(data.foodMap);
         app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
@@ -482,6 +501,7 @@ window.onload = function() {
 
 function restart() {
     $.post("/load", $("#map option:selected").val(), function (data) {
+        currentFruitType = (data.level - 1) % 4;
         app.drawMaze(data.maze, data.mapid);
         app.drawFoodMap(data.foodMap);
         app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
@@ -565,6 +585,7 @@ function updateGame() {
         app.clear();
         app.drawBackground();
         app.drawText("Powered by Team Chaos.", 500, 20);
+        currentFruitType = (data.level - 1) % 4;
         app.drawMaze(data.maze, data.mapid);
         app.drawFoodMap(data.foodMap);
         app.drawText(data.pacman.credit, 70, 20);
@@ -573,6 +594,10 @@ function updateGame() {
             app.drawText(data.pacman2.credit, 200, 20);
             app.drawPlayerName(2);
         }
+        for (var i = 1; i <= data.level; i++) {
+            app.drawFruit((i - 1) % 4, 1180 - i * 40, 360, 30, 30);
+        }
+
         if (data.life > 0) {
             for (var t = 0; t < data.life - 1; t++) {
                 app.drawPacman(pacmanImg[1], 20 + t * 40, 360, data.pacman.size, data.pacman.size, 0);
