@@ -35,11 +35,9 @@ public class Ambusher extends AGhostPersonality {
                 Coordinate target = new Coordinate(getPacmanCoord().x + getPacmanDirection().getDirX() * 4, getPacmanCoord().y + getPacmanDirection().getDirY() * 4);
                 return new TargetStrategy(context.getCoord(), target);
             case 3: return new RandomStrategy();
-            case 4:
+            default:
                 Coordinate resetTarget = new Coordinate(Settings.leftGateX, Settings.gateY);
                 return new TargetStrategy(context.getCoord(), resetTarget);
-            default:
-                return null;
         }
     }
 }

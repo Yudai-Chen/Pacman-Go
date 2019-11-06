@@ -38,11 +38,9 @@ public class Pokey extends AGhostPersonality{
                 }
                 return new TargetStrategy(context.getCoord(), context.getHome());
             case 3: return new RandomStrategy();
-            case 4:
+            default:
                 Coordinate resetTarget = new Coordinate(Settings.leftGateX, Settings.gateY);
                 return new TargetStrategy(context.getCoord(), resetTarget);
-            default:
-                return null;
         }
 
     }

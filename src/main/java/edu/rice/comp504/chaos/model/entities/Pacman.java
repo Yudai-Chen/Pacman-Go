@@ -119,4 +119,12 @@ public class Pacman extends AEntity {
         super.resetLoc();
         playerAction = getStartDir();
     }
+
+    /**
+     * For unit tests.
+     * @return Pacman's credit.
+     */
+    public int getCredit() {
+        return this.credit;
+    }
 }

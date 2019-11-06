@@ -32,11 +32,9 @@ public class Chaser extends AGhostPersonality{
             case 1: return new TargetStrategy(context.getCoord(), context.getHome());
             case 2: return new TargetStrategy(context.getCoord(), getPacmanCoord());
             case 3: return new RandomStrategy();
-            case 4:
+            default:
                 Coordinate resetTarget = new Coordinate(Settings.leftGateX, Settings.gateY);
                 return new TargetStrategy(context.getCoord(), resetTarget);
-            default:
-                return null;
         }
 
     }

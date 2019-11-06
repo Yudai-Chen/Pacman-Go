@@ -301,4 +301,21 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
             period = 3;
         }
     }
+
+
+    /**
+     * For unit tests.
+     * @return pacman's life
+     */
+    public int getLife() {
+        return life;
+    }
+
+    /**
+     * For unit tests.
+     * @return Pacman object.
+     */
+    public Pacman getPacman(int pid) {
+        return pid == 1 ? this.pacman : this.pacman2;
+    }
 }
