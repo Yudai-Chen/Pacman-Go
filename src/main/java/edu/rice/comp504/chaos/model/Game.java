@@ -154,7 +154,7 @@ public class Game implements java.io.Serializable, PropertyChangeListener{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for (int [] row : maze) {
+        for (int [] row : foodMap) {
             for (int item : row) {
                 if (item == 1) {
                     remainingDots++;

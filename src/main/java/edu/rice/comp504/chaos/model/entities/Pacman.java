@@ -74,7 +74,7 @@ public class Pacman extends AEntity {
             pcs.firePropertyChange("timerPause", 0, Settings.frightenedLast);
             setSpeed(Settings.pacmanEnergizedSpeed);
             credit += 50;
-            Utilities.setFoodMapItem(getCoord().x, getCoord().y, 3);
+            Utilities.setFoodMapItem(getCoord().x, getCoord().y, 0);
         } else if (Utilities.getFoodMapItem(getCoord().x, getCoord().y) == 3) {
             credit += 100;
             Utilities.setFoodMapItem(getCoord().x, getCoord().y, 0);
