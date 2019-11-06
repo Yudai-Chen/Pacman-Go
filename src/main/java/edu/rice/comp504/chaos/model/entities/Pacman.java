@@ -21,11 +21,11 @@ public class Pacman extends AEntity {
      * @param speed the speed of pacman.
      * @param size the size of pacman.
      */
-    public Pacman(Game game, Coordinate startLoc, int speed, int size) {
-        super(startLoc, speed, size, new Direction(Settings.pacmanStartDir));
+    public Pacman(Game game, Coordinate startLoc, int speed, int size, Direction startDir) {
+        super(startLoc, speed, size, startDir);
         credit = 0;
         eatenDots = 0;
-        playerAction = new Direction(Settings.pacmanStartDir);
+        playerAction = startDir;
         pcs = new PropertyChangeSupport(this);
         pcs.addPropertyChangeListener("timerPause", game);
     }
@@ -117,6 +117,6 @@ public class Pacman extends AEntity {
      */
     public void resetLoc() {
         super.resetLoc();
-        playerAction = new Direction(Settings.pacmanStartDir);
+        playerAction = getStartDir();
     }
 }

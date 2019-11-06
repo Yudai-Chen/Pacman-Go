@@ -5,14 +5,17 @@ var app;
 //the interval ID for updating the game
 var updateInterval;
 var pacmanImg;
+var pacmanAngle = 0;
+var pacmanStage = 0;
+var pacmanImg2;
+var pacmanAngle2 = 0;
+var pacmanStage2 = 0;
 var pacmanImgSrcPrefix = "./pacman/";
 var ghostImgSrcPrefix = "./ghost/";
 var creditImgSrcPrefix = "./credit/";
 var otherImgSrcPrefix = "./other/";
 var keyCode = null;
 var isKeyDown = false;
-var pacmanAngle = 0;
-var pacmanStage = 0;
 var redGhostImg;
 var pinkGhostImg;
 var blueGhostImg;
@@ -25,6 +28,8 @@ var readyImg;
 var overImg;
 var dyingImg;
 var displayTarget;
+var playerNameImg;
+var iconImg;
 
 function logicToPhysical(lx,ly) {
     return {
@@ -133,6 +138,8 @@ function createApp(canvas) {
                         context.arc(980, 160, 10, .5 * Math.PI, 1.5 * Math.PI, false);
                         context.stroke();
                         context.closePath();
+                    } else if (id === 2) {
+                        drawPacManIcon();
                     }
                 }
             }
@@ -245,6 +252,16 @@ function createApp(canvas) {
         context.restore();
     };
 
+    var drawPlayerName = function (playerName) {
+        context.save();
+        if (playerName === 1) {
+            context.drawImage(playerNameImg[0], 20, 5, 40, 20);
+        } else if (playerName === 2) {
+            context.drawImage(playerNameImg[1], 150, 5, 40, 20);
+        }
+        context.restore();
+    };
+
     var drawOver = function (x, y, width, height) {
         context.save();
         context.drawImage(overImg, x, y, width, height);
@@ -302,14 +319,18 @@ function createApp(canvas) {
         }
         context.stroke();
         context.restore();
+    };
 
-
+    var drawPacManIcon = function() {
+        context.save();
+        context.drawImage(iconImg, 228, 148, 84, 24);
+        context.restore();
     };
 
     var drawText = function(text, x, y) {
         context.save();
-        context.fillStyle = '#FFFFFF'; // 文本颜色
-        context.font = '20px Airal'; // 文本字号、字体著作权归作者所有。
+        context.fillStyle = '#FFFFFF';
+        context.font = '20px Airal';
         context.fillText(text, x, y);
         context.restore();
     };
@@ -328,12 +349,15 @@ function createApp(canvas) {
         drawReady: drawReady,
         drawOver: drawOver,
         drawCredit: drawCredit,
+        drawPlayerName: drawPlayerName,
         drawTarget: drawTarget,
         drawText: drawText,
+        drawPacManIcon: drawPacManIcon,
         clear: clear,
         dims: {height: canvas.height, width: canvas.width}
     }
 }
+
 
 function loadImages() {
     pacmanImg = [];
@@ -343,6 +367,13 @@ function loadImages() {
     pacmanImg[1].src = pacmanImgSrcPrefix + "stage2.png";
     pacmanImg[2] = new Image();
     pacmanImg[2].src = pacmanImgSrcPrefix + "stage3.png";
+    pacmanImg2 = [];
+    pacmanImg2[0] = new Image();
+    pacmanImg2[0].src = pacmanImgSrcPrefix + "stage1_2.png";
+    pacmanImg2[1] = new Image();
+    pacmanImg2[1].src = pacmanImgSrcPrefix + "stage2_2.png";
+    pacmanImg2[2] = new Image();
+    pacmanImg2[2].src = pacmanImgSrcPrefix + "stage3_2.png";
     redGhostImg = [];
     pinkGhostImg = [];
     blueGhostImg = [];
@@ -394,6 +425,13 @@ function loadImages() {
     frightenBlueGhostImg.src = ghostImgSrcPrefix + "frighten_blue.png";
     frightenWhiteGhostImg = new Image();
     frightenWhiteGhostImg.src = ghostImgSrcPrefix + "frighten_white.png";
+    playerNameImg = [];
+    playerNameImg[0] = new Image();
+    playerNameImg[0].src = otherImgSrcPrefix + "1UP.png";
+    playerNameImg[1] = new Image();
+    playerNameImg[1].src = otherImgSrcPrefix + "2UP.png";
+    iconImg = new Image();
+    iconImg.src = otherImgSrcPrefix + "icon.png";
 }
 
 window.onload = function() {
@@ -408,24 +446,35 @@ window.onload = function() {
     });
     app = createApp(document.querySelector("canvas"));
     app.drawBackground();
+
     app.drawText("Powered by Team Chaos.", 500, 20);
     $.post("/load", $("#map option:selected").val(), function (data) {
         app.drawMaze(data.maze, data.mapid);
         app.drawFoodMap(data.foodMap);
         app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
+        if (data.isTwoPlayer) {
+            app.drawPacman(pacmanImg2[0], data.pacman2.loc.x - data.pacman2.size / 2, data.pacman2.loc.y - data.pacman2.size / 2, data.pacman2.size, data.pacman2.size, 0);
+        }
         data.ghosts.forEach(function(element) {
             app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
             if (displayTarget) {
                 app.drawTarget(element.targetForDebug.x, element.targetForDebug.y, element.name);
             }
         });
-        app.drawText(data.pacman.credit, 20, 20);
+        app.drawText(data.pacman.credit, 70, 20);
+        app.drawPlayerName(1);
+        if (data.isTwoPlayer) {
+            app.drawText(data.pacman2.credit, 200, 20);
+            app.drawPlayerName(2);
+        }
     }, "json");
     app.drawReady(readyImg, 720, 200, 45, 7);
     setUpdateFreq();
     $("#btn-pause").click(pause);
     $("#btn-resume").click(resume);
     $("#btn-display").click(displayTargetOrNot);
+    $("#btn-player").click(addPlayer);
+    $("#btn-editor").click(mapEditor);
     $("#btn-map").click(restart);
     $("#btn-restart").click(restart);
 };
@@ -436,14 +485,26 @@ function restart() {
         app.drawMaze(data.maze, data.mapid);
         app.drawFoodMap(data.foodMap);
         app.drawPacman(pacmanImg[0], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, 0);
+        if (data.isTwoPlayer) {
+            app.drawPacman(pacmanImg2[0], data.pacman2.loc.x - data.pacman2.size / 2, data.pacman2.loc.y - data.pacman2.size / 2, data.pacman2.size, data.pacman2.size, 0);
+        }
         data.ghosts.forEach(function(element) {
             app.drawGhost(element.state, element.name, element.dir.directionName, element.loc.x - element.size / 2, element.loc.y - element.size / 2, element.size, element.size, element.frightenTimeOut);
             if (displayTarget) {
                 app.drawTarget(element.targetForDebug.x, element.targetForDebug.y, element.name);
             }
         });
-        app.drawText(data.pacman.credit, 20, 20);
+        app.drawText(data.pacman.credit, 70, 20);
+        app.drawPlayerName(1);
+        if (data.isTwoPlayer) {
+            app.drawText(data.pacman2.credit, 200, 20);
+            app.drawPlayerName(2);
+        }
     }, "json");
+}
+
+function mapEditor() {
+    window.location.href="mapEditor.html";
 }
 
 /**
@@ -459,6 +520,12 @@ function pause() {
 
 function resume() {
     updateInterval = setInterval("updateGame()", 100);
+}
+
+function addPlayer() {
+    $.post("/add-player", $("#map option:selected").val(), function(data) {
+
+    });
 }
 
 function displayTargetOrNot() {
@@ -479,6 +546,14 @@ function updateGame() {
             move = "right";
         } else if (keyCode === 40) {
             move = "down";
+        } else if (keyCode === 65) {
+            move = "left2";
+        } else if (keyCode === 87) {
+            move ="up2";
+        } else if (keyCode === 68) {
+            move = "right2";
+        } else if (keyCode === 83) {
+            move = "down2";
         } else {
             return;
         }
@@ -492,7 +567,12 @@ function updateGame() {
         app.drawText("Powered by Team Chaos.", 500, 20);
         app.drawMaze(data.maze, data.mapid);
         app.drawFoodMap(data.foodMap);
-        app.drawText(data.pacman.credit, 20, 20);
+        app.drawText(data.pacman.credit, 70, 20);
+        app.drawPlayerName(1);
+        if (data.isTwoPlayer) {
+            app.drawText(data.pacman2.credit, 200, 20);
+            app.drawPlayerName(2);
+        }
         if (data.life > 0) {
             for (var t = 0; t < data.life - 1; t++) {
                 app.drawPacman(pacmanImg[1], 20 + t * 40, 360, data.pacman.size, data.pacman.size, 0);
@@ -501,6 +581,11 @@ function updateGame() {
             app.drawOver(680, 220, 120, 20);
             return;
         }
+
+        if (data.period === 0) {
+            app.drawReady(readyImg, 695, 225, 90, 15);
+        }
+
         if (data.pacman.dir.directionName === "left") {
             pacmanAngle = 0;
         } else if (data.pacman.dir.directionName === "up") {
@@ -510,14 +595,29 @@ function updateGame() {
         } else if (data.pacman.dir.directionName === "down") {
             pacmanAngle = 1.5 * Math.PI;
         }
-        if (data.period === 0) {
-            app.drawReady(readyImg, 695, 225, 90, 15);
+        if (data.isTwoPlayer) {
+            if (data.pacman2.dir.directionName === "left") {
+                pacmanAngle2 = 0;
+            } else if (data.pacman2.dir.directionName === "up") {
+                pacmanAngle2 = .5 * Math.PI;
+            } else if (data.pacman2.dir.directionName === "right") {
+                pacmanAngle2 = Math.PI;
+            } else if (data.pacman2.dir.directionName === "down") {
+                pacmanAngle2 = 1.5 * Math.PI;
+            }
         }
+
         if (data.dying) {
             app.drawDying(data.dyingTimeOut, data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size);
+            if (data.isTwoPlayer) {
+                app.drawDying(data.dyingTimeOut, data.pacman2.loc.x - data.pacman2.size / 2, data.pacman2.loc.y - data.pacman2.size / 2, data.pacman2.size, data.pacman2.size);
+            }
         } else {
             if (data.gamePause !== true) {
                 app.drawPacman(pacmanImg[pacmanStage], data.pacman.loc.x - data.pacman.size / 2, data.pacman.loc.y - data.pacman.size / 2, data.pacman.size, data.pacman.size, pacmanAngle);
+                if (data.isTwoPlayer) {
+                    app.drawPacman(pacmanImg2[pacmanStage], data.pacman2.loc.x - data.pacman2.size / 2, data.pacman2.loc.y - data.pacman2.size / 2, data.pacman2.size, data.pacman2.size, pacmanAngle2);
+                }
             }
             if (!data.dying) {
                 data.ghosts.forEach(function (element) {

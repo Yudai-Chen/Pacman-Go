@@ -10,15 +10,18 @@ Pac-Man is a very popular maze arcade game first released by Namco in 1980.
 
 ## Install
 
+```sh
+$ git clone git@github.com:RiceGradOOCourse/game-chaos.git
+$ mvn package
+```
+
 ## Usage
 
 ```sh
-$ mvn compile
-$ mvn package
-$ java -jar .\target\Pac-manGo.jar
+$ java -jar .\target\pac-man-go-jar-with-dependencies.jar
 ```
 
-Or play a live version:
+Or play a live version: https://pacman-team-chaos.herokuapp.com/
 
 ## Maintainer
 

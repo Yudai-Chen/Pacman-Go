@@ -16,7 +16,7 @@ public class Utilities {
      * @param mapFileLocation the location of the maze map file.
      * @throws IOException file not found.
      */
-    static void loadStaticMaze(String mapFileLocation) throws IOException {
+    public static void loadStaticMaze(String mapFileLocation) throws IOException {
         sMaze = loadMap(mapFileLocation);
     }
 
@@ -117,7 +117,7 @@ public class Utilities {
      * Get the static maze.
      * @return the static maze.
      */
-    static int[][] getsMaze() {
+    public static int[][] getsMaze() {
         return sMaze;
     }
 

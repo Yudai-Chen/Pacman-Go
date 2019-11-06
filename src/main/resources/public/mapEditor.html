@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Map Editor</title>
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/mapEditor.js"></script>
+</head>
+<body>
+<div class="wrapper" style="position:fixed; top:3em; left:0;">
+    <div id="container">
+        <canvas id="canvas-editor" width="1200" height="400" style="border: 1px solid #000000"></canvas>
+    </div>
+    <div>
+        <p>----------------------------------------------</p>
+        <button id="eraser">Eraser</button>
+        <button id="pen-blue">Blue Pen</button>
+        <button id="pen-red">Red Pen</button>
+        <button id="pen-yellow">Yellow Pen</button>
+        <button id="pen-green">Green Pen</button>
+        <button id="reset">Reset</button>
+        <p>----------------------------------------------</p>
+    </div>
+    <div>
+        <button id="btn-submit">Submit</button>
+        <p>Click here to submit change.</p>
+        <p>----------------------------------------------</p>
+    </div>
+    <div>
+        <select id="saved-map">
+            <option value = 1>Google</option>
+            <option value = 2>Chaos</option>
+        </select>
+        <button id="btn-load">Load</button>
+        <p>Click here to load a existing map.</p>
+        <p>----------------------------------------------</p>
+    </div>
+</div>
+</body>
+</html>

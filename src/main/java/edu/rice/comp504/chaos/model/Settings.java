@@ -6,7 +6,7 @@ import java.util.Objects;
  * Application global settings. All static basic types variables.
  */
 public class Settings {
-    static String mapFileLocation = "/public/map";
+    public static String mapFileLocation = "/public/map";
     //static String mapFileLocation = Objects.requireNonNull(Game.class.getClassLoader().getResource("../..")).getPath();
     public static int spawnXMin = 660;
     public static int spawnXMax = 820;
@@ -26,10 +26,13 @@ public class Settings {
 
     static int pacmanStartLocX = 740;
     static int pacmanStartLocY = 330;
+    static int pacman2StartLocX = 740;
+    static int pacman2StartLocY = 330;
     static int pacmanSpeed = 5;
     static int pacmanSize = 30;
     public static int pacmanEnergizedSpeed = 7;
-    public static String pacmanStartDir = "left";
+    static String pacmanStartDir = "left";
+    static String pacman2StartDir = "right";
 
     static int redStartLocX = 740;
     static int redStartLocY = 110;
