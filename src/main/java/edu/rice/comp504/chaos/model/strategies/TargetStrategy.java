@@ -5,6 +5,7 @@ import edu.rice.comp504.chaos.model.Direction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * A strategy which can make the ghost approach the target in a shortest way.
@@ -12,7 +13,7 @@ import java.util.List;
 public class TargetStrategy implements IGhostStrategy {
     private Coordinate current;
     private Coordinate target;
-
+    private static final List<String> allDirections = Arrays.asList("up", "left", "down", "right");
     /**
      * Constructor.
      * @param current the current Coordinate of the host.
@@ -39,12 +40,7 @@ public class TargetStrategy implements IGhostStrategy {
     public Direction choose(Coordinate current, List<Direction> availableDirections) {
         Direction result = null;
         double currentMin = Double.MAX_VALUE;
-        List<String> allDirections = new ArrayList<>();
-        // Do not change the order.
-        allDirections.add("up");
-        allDirections.add("left");
-        allDirections.add("down");
-        allDirections.add("right");
+        
         for (String dirName : allDirections) {
             for (Direction direction : availableDirections) {
                 if (direction.getDirName().equals(dirName)) {
