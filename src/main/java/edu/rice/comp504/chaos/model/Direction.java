@@ -2,6 +2,7 @@ package edu.rice.comp504.chaos.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * The intended change in Coordinate.
@@ -9,6 +10,7 @@ import java.util.List;
 public class Direction {
     private Coordinate dir;
     private String directionName;
+    private static final List<String> allDirections = Arrays.asList("left", "up", "down", "right");
     /**
      * Constructor.
      * @param directionName the name of the direction.
@@ -63,13 +65,6 @@ public class Direction {
      * @return the reverse direction.
      */
     public Direction getReverse() {
-        List<String> allDirections = new ArrayList<>();
-        // Do not change the order.
-        allDirections.add("left");
-        allDirections.add("up");
-        allDirections.add("down");
-        allDirections.add("right");
-
         return new Direction(allDirections.get(3 - allDirections.indexOf(getDirName())));
     }
 }
